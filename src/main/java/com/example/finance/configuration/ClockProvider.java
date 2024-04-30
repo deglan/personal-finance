@@ -9,6 +9,7 @@ import java.time.Instant;
 public class ClockProvider {
 
     public Instant getDate() {
-        return Clock.systemUTC().instant();
+        Clock clock = Clock.systemUTC();
+        return clock.instant();
     }
 }
