@@ -1,0 +1,42 @@
+app:
+  db:
+    src: jdbc:postgresql://localhost:5432/finance
+    username: postgres
+    password: clinic
+server:
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    url: ${app.db.src}
+    username: ${app.db.username}
+    password: ${app.db.password}
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: never
+  jpa:
+    hibernate:
+      default_schema: public
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    servlet:
+      multipart:
+        max-file-size: 25MB
+        max-request-size: 50MB
+  logging:
+    level:
+      org:
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql: TRACE
+  flyway:
+    url: ${app.db.src}
+    user: ${app.db.username}
+    password: ${app.db.password}
+    locations:
+      classpath: db/migration
