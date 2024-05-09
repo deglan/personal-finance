@@ -1,7 +1,7 @@
 package com.example.finance.exception;
 
 import com.example.finance.exception.model.AuthorizationException;
-import com.example.finance.exception.model.FailureOperationException;
+import com.example.finance.exception.model.BackendException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ExceptionController {
 
-    @ExceptionHandler(value = {FailureOperationException.class})
-    public ResponseEntity<ProjectError> failureOperationException(FailureOperationException ex) {
+    @ExceptionHandler(value = {BackendException.class})
+    public ResponseEntity<ProjectError> failureOperationException(BackendException ex) {
         ProjectError failureOperationException = ProjectError.builder()
                 .errorName("failureOperationException")
                 .message(ex.getMessage())

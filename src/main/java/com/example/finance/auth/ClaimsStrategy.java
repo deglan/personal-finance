@@ -3,6 +3,7 @@ package com.example.finance.auth;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.finance.model.entity.UserAccountEntity;
+import com.example.finance.model.enums.UserRole;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -35,16 +36,27 @@ public enum ClaimsStrategy {
     ROLE {
         @Override
         public String createClaim(UserAccountEntity user) {
-            return user.getRolesEntities().toString();
+            if (user.getRole() == null) {
+                return null;
+            }
+            return user.getRole().stream()
+                    .map(Enum::toString)
+                    .collect(Collectors.joining(SEPARATOR));
         }
 
         @Override
         public Object getClaim(DecodedJWT decodedJWT) {
-            return super.decodeClaim(decodedJWT).asString();
+            String rolesString = super.decodeClaim(decodedJWT).asString();
+            if (rolesString == null) {
+                return null;
+            }
+            return Arrays.stream(rolesString.split(SEPARATOR))
+                    .map(UserRole::from)
+                    .toList();
         }
     };
 
-
+    private static final String SEPARATOR = "::";
     private static final ClaimsStrategy[] VALUES = values();
 
     public abstract String createClaim(UserAccountEntity user);

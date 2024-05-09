@@ -3,15 +3,31 @@ package com.example.finance.mapper;
 import com.example.finance.constants.ApplicationConstants;
 import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.entity.CategoryEntity;
+import com.example.finance.model.entity.UserAccountEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = ApplicationConstants.SPRING_COMPONENT_MODEL)
+import java.util.UUID;
+
+@Mapper(componentModel = ApplicationConstants.SPRING_COMPONENT_MODEL, uses = {UserAccountMapper.class})
 public interface CategoryMapper {
 
     @Named("toDto")
+    @Mapping(source = "userAccountEntity.userId", target = "userId")
     CategoryDto toDto(CategoryEntity categoryEntity);
 
     @Named("toEntity")
+    @Mapping(target = "userAccountEntity", source = "userId", qualifiedByName = "userIdToUserAccountEntity")
     CategoryEntity toEntity(CategoryDto categoryDto);
+
+    @Named("userIdToUserAccountEntity")
+    default UserAccountEntity fromUserId(UUID userId) {
+        if (userId == null) {
+            return null;
+        }
+        UserAccountEntity userAccount = new UserAccountEntity();
+        userAccount.setUserId(userId);
+        return userAccount;
+    }
 }

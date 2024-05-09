@@ -1,0 +1,96 @@
+package com.example.finance.service;
+
+import com.example.finance.exception.model.BackendException;
+import com.example.finance.mapper.TransactionMapper;
+import com.example.finance.model.dto.TransactionDto;
+import com.example.finance.model.entity.CategoryEntity;
+import com.example.finance.model.entity.TransactionsEntity;
+import com.example.finance.model.entity.UserAccountEntity;
+import com.example.finance.repository.CategoriesRepository;
+import com.example.finance.repository.TransactionsRepository;
+import com.example.finance.repository.UserAccountRepository;
+import jakarta.persistence.EntityManager;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@Slf4j
+@Service
+@AllArgsConstructor
+public class TransactionService {
+
+    private static final String MESSAGE = "There is no such category";
+
+    private final TransactionsRepository transactionsRepository;
+    private final UserAccountRepository userAccountRepository;
+    private final TransactionMapper transactionMapper;
+    private final CategoriesRepository categoriesRepository;
+    private final EntityManager entityManager;
+
+
+    public List<TransactionDto> getByUserId(UUID userId) {
+        return toDtoList(transactionsRepository.findByUserAccountEntityUserId(userId));
+    }
+
+    public TransactionDto getById(UUID id) {
+        return transactionsRepository.findById(id)
+                .map(transactionMapper::toDto)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+    }
+
+    @Transactional
+    public TransactionDto create(TransactionDto transaction) {
+        UserAccountEntity userAccountEntity = userAccountRepository.findById(transaction.userId())
+                .orElseThrow(() -> new BackendException("User not found"));
+        CategoryEntity categoryEntity = categoriesRepository.findById(transaction.categoryId())
+                .orElseThrow(() -> new BackendException("Category not found"));
+        TransactionsEntity transactionsEntity = TransactionsEntity.builder()
+                .userAccountEntity(userAccountEntity)
+                .categoryEntity(categoryEntity)
+                .amount(transaction.amount())
+                .transactionType(transaction.transactionType())
+                .date(LocalDate.now())
+                .description(transaction.description())
+                .build();
+        transactionsRepository.save(transactionsEntity);
+
+        log.info("Saved transaction with ID {} and type {} for user with ID {}",
+                transactionsEntity.getTransactionID(),
+                transactionsEntity.getTransactionType(),
+                transactionsEntity.getUserAccountEntity().getUserId());
+
+        return transactionMapper.toDto(transactionsEntity);
+    }
+
+    @Transactional
+    public TransactionDto updateTransaction(UUID id, TransactionDto transaction) {
+        TransactionsEntity transactionDb = transactionsRepository.findById(id)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+        transactionDb.setAmount(transaction.amount());
+        transactionDb.setTransactionType(transaction.transactionType());
+        transactionDb.setDescription(transaction.description());
+        transactionsRepository.save(transactionDb);
+        return transactionMapper.toDto(transactionDb);
+    }
+
+    //TODO wróć do delete
+    public void deleteTransaction(UUID id) {
+        TransactionsEntity transactionsEntity = transactionsRepository.findById(id)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+        transactionsRepository.findById(id)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+        transactionsRepository.delete(transactionsEntity);
+//        entityManager.flush();
+    }
+
+    private List<TransactionDto> toDtoList(List<TransactionsEntity> transactionsEntities) {
+        return transactionsEntities.stream()
+                .map(transactionMapper::toDto)
+                .toList();
+    }
+}

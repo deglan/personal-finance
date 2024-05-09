@@ -1,30 +1,34 @@
 package com.example.finance.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table(name = "BUDGET")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"userAccountEntity"})
 public class BudgetEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "BUDGET_ID")
     private UUID budgetId;
-    @OneToOne
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserAccountEntity userAccountEntity;
-    @OneToMany(mappedBy = "categoryId", fetch = FetchType.EAGER)
-    private Set<CategoryEntity> categoryEntity;
+    @ManyToOne(
+            fetch = FetchType.EAGER
+    )
+    @JoinColumn(name = "CATEGORY_ID")
+    private CategoryEntity categoryEntity;
     @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;
     @Column(name = "MONTH", nullable = false)

@@ -1,14 +1,14 @@
 package com.example.finance.model.entity;
 
+import com.example.finance.auth.RoleConverter;
+import com.example.finance.model.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,6 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
+@ToString(exclude = {"categoryEntities", "budgetEntities", "transactionsEntities", "reportEntities"})
 public class UserAccountEntity {
 
     @Id
@@ -34,17 +36,39 @@ public class UserAccountEntity {
     private LocalDateTime createdDate;
     @Column(name = "LAST_LOGIN")
     private LocalDateTime lastLogin;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "userAccountEntity",
+            cascade = CascadeType.ALL
+    )
+    private List<CategoryEntity> categoryEntities;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "userAccountEntity",
+            cascade = CascadeType.ALL
+    )
+    private List<BudgetEntity> budgetEntities;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "userAccountEntity",
+            cascade = CascadeType.ALL
+    )
+    private List<TransactionsEntity> transactionsEntities;
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            mappedBy = "userAccountEntity",
+            cascade = CascadeType.ALL
+    )
+    private List<ReportEntity> reportEntities;
+    @Column(name = "ROLE")
+    @Convert(converter = RoleConverter.class)
+    private List<UserRole> role;
     @Column(name = "DELETED")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private boolean deleted;
+    @Builder.Default
+    private boolean deleted = false;
     @Column(name = "ACTIVE")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private boolean active;
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(
-            name = "USER_ROLE",
-            joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
-    )
-    private Set<RoleEntity> rolesEntities;
+    @Builder.Default
+    private boolean active = true;
 }

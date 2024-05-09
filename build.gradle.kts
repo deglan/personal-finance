@@ -30,6 +30,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.security:spring-security-crypto:6.2.2")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation:3.2.5")
 	implementation("org.flywaydb:flyway-core")
 	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1")

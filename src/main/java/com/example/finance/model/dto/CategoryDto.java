@@ -4,5 +4,9 @@ import com.example.finance.model.enums.TransactionType;
 
 import java.util.UUID;
 
-public record CategoryDto(UUID categoryId, String name, TransactionType transactionType, String description) {
+public record CategoryDto(UUID categoryId,
+                          UUID userId,
+                          String name,
+                          TransactionType transactionType,
+                          String description) {
 }

@@ -7,6 +7,8 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.finance.configuration.ClockProvider;
 import com.example.finance.exception.model.AuthorizationException;
+import com.example.finance.mapper.UserAccountMapper;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,10 @@ public class TokenService {
     private static final long EXPIRED_TIME_MILLIS = 30 * 60 * 1000;
 
     private final ClockProvider clock;
+    private final UserAccountMapper userAccountMapper;
 
-    public String generateBearerToken(UserAccountEntity user) {
-        Map<String, Object> claims = ClaimsStrategy.getClaims(user);
+    public String generateBearerToken(UserAccountDto user) {
+        Map<String, Object> claims = ClaimsStrategy.getClaims(userAccountMapper.toEntity(user));
         return generateToken(claims);
     }
 
