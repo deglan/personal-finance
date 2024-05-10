@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class CategoryService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public CategoryDto create(CategoryDto category) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(category.userId())
                 .orElseThrow(() -> new BackendException("User not found"));
@@ -75,10 +76,7 @@ public class CategoryService {
 
     //TODO wróć do delete
     public void deleteCategory(UUID id) {
-        CategoryEntity categoryEntity = categoriesRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
-        categoriesRepository.delete(categoryEntity);
-//        entityManager.flush();
+        categoriesRepository.deleteById(id);
     }
 
     private List<CategoryDto> toDtoList(List<CategoryEntity> categoryEntities) {

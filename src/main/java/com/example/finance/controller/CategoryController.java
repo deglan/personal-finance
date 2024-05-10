@@ -43,9 +43,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(value = ApiEndpoints.Endpoints.ID)
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) {
         categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
     }
-
 }

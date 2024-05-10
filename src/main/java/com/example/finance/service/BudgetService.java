@@ -39,6 +39,7 @@ public class BudgetService {
                 .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
     }
 
+
     public BudgetDto create(BudgetDto budget) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(budget.userId())
                 .orElseThrow(() -> new BackendException("User not found"));
