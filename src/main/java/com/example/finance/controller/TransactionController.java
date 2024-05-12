@@ -4,9 +4,11 @@ import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.TransactionDto;
 import com.example.finance.service.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,10 +24,17 @@ public class TransactionController {
         return ResponseEntity.ok(transactionById);
     }
 
+    @GetMapping(value = ApiEndpoints.Endpoints.GET_TRANSACTIONS_BY_USER_ID)
+    public ResponseEntity<List<TransactionDto>> getTransactionsByUserId(@PathVariable UUID id) {
+        List<TransactionDto> byUserId = transactionService.getByUserId(id);
+        return ResponseEntity.ok(byUserId);
+    }
+
     @PostMapping(value = ApiEndpoints.Endpoints.CREATE)
     public ResponseEntity<TransactionDto> create(@RequestBody TransactionDto transaction) {
         TransactionDto transactionDto = transactionService.create(transaction);
-        return ResponseEntity.ok(transactionDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(transactionDto);
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)

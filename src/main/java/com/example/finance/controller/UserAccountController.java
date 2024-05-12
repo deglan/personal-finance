@@ -2,7 +2,7 @@ package com.example.finance.controller;
 
 import com.example.finance.auth.TokenService;
 import com.example.finance.business.ApiEndpoints;
-import com.example.finance.model.dto.*;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.service.*;
 import lombok.AllArgsConstructor;
@@ -21,10 +21,6 @@ import java.util.UUID;
 public class UserAccountController {
 
     private final UserAccountService userAccountService;
-    private final CategoryService categoryService;
-    private final BudgetService budgetService;
-    private final TransactionService transactionService;
-    private final ReportService reportService;
     private final TokenService tokenService;
 
     @PostMapping(value = ApiEndpoints.Endpoints.LOGIN, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
@@ -48,29 +44,6 @@ public class UserAccountController {
         return ResponseEntity.ok(userById);
     }
 
-    @GetMapping(value = ApiEndpoints.Endpoints.GET_CATEGORIES_BY_USER_ID)
-    public ResponseEntity<List<CategoryDto>> getCategoriesByUserId(@PathVariable UUID id) {
-        List<CategoryDto> byUserId = categoryService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
-    }
-
-    @GetMapping(value = ApiEndpoints.Endpoints.GET_TRANSACTIONS_BY_USER_ID)
-    public ResponseEntity<List<TransactionDto>> getTransactionsByUserId(@PathVariable UUID id) {
-        List<TransactionDto> byUserId = transactionService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
-    }
-
-    @GetMapping(value = ApiEndpoints.Endpoints.GET_BUDGETS_BY_USER_ID)
-    public ResponseEntity<List<BudgetDto>> getBudgetsByUserId(@PathVariable UUID id) {
-        List<BudgetDto> byUserId = budgetService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
-    }
-
-    @GetMapping(value = ApiEndpoints.Endpoints.GET_REPORTS_BY_USER_ID)
-    public ResponseEntity<List<ReportDto>> getReportsByUserId(@PathVariable UUID id) {
-        List<ReportDto> byUserId = reportService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
-    }
 
     @PostMapping(value = ApiEndpoints.Endpoints.CREATE)
     public ResponseEntity<UserAccountDto> create(@RequestBody UserAccountEntity userAccount) {
@@ -86,8 +59,8 @@ public class UserAccountController {
     }
 
     @DeleteMapping(value = ApiEndpoints.Endpoints.ID)
-    public ResponseEntity<UserAccountDto> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         UserAccountDto userAccountDto = userAccountService.deleteUser(id);
-        return ResponseEntity.ok(userAccountDto);
+        return ResponseEntity.noContent().build();
     }
 }

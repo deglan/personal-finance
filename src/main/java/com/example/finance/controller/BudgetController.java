@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,8 +21,14 @@ public class BudgetController {
     private final BudgetService budgetService;
 
     @GetMapping(ApiEndpoints.Endpoints.ID)
-    public ResponseEntity<BudgetDto> getById(@PathVariable @NotNull(message = "Budget not found") UUID id) {
+    public ResponseEntity<BudgetDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(budgetService.getById(id));
+    }
+
+    @GetMapping(value = ApiEndpoints.Endpoints.GET_BUDGETS_BY_USER_ID)
+    public ResponseEntity<List<BudgetDto>> getBudgetsByUserId(@PathVariable UUID id) {
+        List<BudgetDto> byUserId = budgetService.getByUserId(id);
+        return ResponseEntity.ok(byUserId);
     }
 
     @PostMapping(ApiEndpoints.Endpoints.CREATE)
@@ -31,8 +38,8 @@ public class BudgetController {
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
-    public ResponseEntity<BudgetDto> update(@PathVariable UUID id, @RequestBody BudgetDto transaction) {
-        BudgetDto budgetDto = budgetService.updateBudget(id, transaction);
+    public ResponseEntity<BudgetDto> update(@PathVariable UUID id, @RequestBody BudgetDto budget) {
+        BudgetDto budgetDto = budgetService.updateBudget(id, budget);
         return ResponseEntity.ok(budgetDto);
     }
 

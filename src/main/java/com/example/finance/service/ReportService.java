@@ -47,20 +47,13 @@ public class ReportService {
     public ReportDto create(ReportDto report) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(report.userId())
                 .orElseThrow(() -> new BackendException("User not found"));
-        ReportEntity reportEntity = ReportEntity.builder()
-                .userAccountEntity(userAccountEntity)
-                .reportType(report.reportType())
-                .startDate(report.startDate())
-                .endDate(report.endDate())
-                .generatedDate(LocalDate.now())
-                .build();
+        ReportEntity reportEntity = reportMapper.toEntity(report);
+        reportEntity.setUserAccountEntity(userAccountEntity);
         reportRepository.save(reportEntity);
-
         log.info("Saved report with ID {} and type {} for user with ID {}",
                 reportEntity.getReportId(),
                 reportEntity.getReportType(),
                 reportEntity.getUserAccountEntity().getUserId());
-
         return reportMapper.toDto(reportEntity);
     }
 
@@ -72,12 +65,8 @@ public class ReportService {
         reportRepository.save(reportDb);
         return reportMapper.toDto(reportDb);
     }
-    //TODO wróć do delete
     public void deleteReport(UUID id) {
-        ReportEntity reportEntity = reportRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
-        reportRepository.delete(reportEntity);
-//        entityManager.flush();
+        reportRepository.deleteById(id);
     }
 
     private List<ReportDto> toDtoList(List<ReportEntity> reportEntities) {

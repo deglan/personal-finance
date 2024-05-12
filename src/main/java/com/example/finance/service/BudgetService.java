@@ -9,6 +9,7 @@ import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.BudgetRepository;
 import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.UserAccountRepository;
+import com.example.finance.utils.MessageConstants;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,18 +41,14 @@ public class BudgetService {
     }
 
 
-    public BudgetDto create(BudgetDto budget) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findById(budget.userId())
-                .orElseThrow(() -> new BackendException("User not found"));
-        CategoryEntity categoryEntity = categoriesRepository.findById(budget.categoryId())
-                .orElseThrow(() -> new BackendException("Category not found"));
-        BudgetEntity budgetEntity = BudgetEntity.builder()
-                .userAccountEntity(userAccountEntity)
-                .categoryEntity(categoryEntity)
-                .amount(budget.amount())
-                .month(budget.month())
-                .year(budget.year())
-                .build();
+    public BudgetDto create(BudgetDto budgetDto) {
+        UserAccountEntity userAccountEntity = userAccountRepository.findById(budgetDto.userId())
+                .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
+        CategoryEntity categoryEntity = categoriesRepository.findById(budgetDto.categoryId())
+                .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
+        BudgetEntity budgetEntity = budgetMapper.toEntity(budgetDto);
+        budgetEntity.setUserAccountEntity(userAccountEntity);
+        budgetEntity.setCategoryEntity(categoryEntity);
         budgetRepository.save(budgetEntity);
         log.debug(String.format("Created Budget with id %s and amount %s",
                 budgetEntity.getBudgetId(),
@@ -70,12 +67,8 @@ public class BudgetService {
         return budgetMapper.toDto(budgetDb);
     }
 
-    //TODO wróć do delete
     public void deleteBudget(UUID id) {
-        BudgetEntity budgetEntity = budgetRepository.findById(id)
-                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
-        budgetRepository.delete(budgetEntity);
-//        entityManager.flush();
+        budgetRepository.deleteById(id);
     }
 
     private List<BudgetDto> toDtoList(List<BudgetEntity> budgetEntities) {

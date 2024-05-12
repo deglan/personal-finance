@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.example.finance.business.ApiEndpoints.Endpoints.*;
@@ -69,7 +70,9 @@ public enum ApiEndpoints {
 
     private static boolean matchUrl(String endpointPattern, String url) {
         String regex = endpointPattern.replace("{id}", "[\\w\\-]+");
-        return Pattern.compile(regex).matcher(url).matches();
+        Pattern compile = Pattern.compile(regex);
+        Matcher matcher = compile.matcher(url);
+        return matcher.matches();
     }
 
     @UtilityClass

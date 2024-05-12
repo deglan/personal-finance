@@ -49,14 +49,9 @@ public class TransactionService {
                 .orElseThrow(() -> new BackendException("User not found"));
         CategoryEntity categoryEntity = categoriesRepository.findById(transaction.categoryId())
                 .orElseThrow(() -> new BackendException("Category not found"));
-        TransactionsEntity transactionsEntity = TransactionsEntity.builder()
-                .userAccountEntity(userAccountEntity)
-                .categoryEntity(categoryEntity)
-                .amount(transaction.amount())
-                .transactionType(transaction.transactionType())
-                .date(LocalDate.now())
-                .description(transaction.description())
-                .build();
+        TransactionsEntity transactionsEntity = transactionMapper.toEntity(transaction);
+        transactionsEntity.setUserAccountEntity(userAccountEntity);
+        transactionsEntity.setCategoryEntity(categoryEntity);
         transactionsRepository.save(transactionsEntity);
 
         log.info("Saved transaction with ID {} and type {} for user with ID {}",

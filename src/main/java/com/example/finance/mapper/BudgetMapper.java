@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mapper(componentModel = ApplicationConstants.SPRING_COMPONENT_MODEL, uses = {UserAccountMapper.class, CategoryMapper.class})
@@ -26,21 +27,23 @@ public interface BudgetMapper {
 
     @Named("userIdToUserAccount")
     default UserAccountEntity userIdToUserAccount(UUID userId) {
-        if (userId == null) {
-            return null;
-        }
-        UserAccountEntity user = new UserAccountEntity();
-        user.setUserId(userId);
-        return user;
+        return Optional.ofNullable(userId)
+                .map(id -> {
+                    UserAccountEntity user = new UserAccountEntity();
+                    user.setUserId(id);
+                    return user;
+                })
+                .orElse(null);
     }
 
     @Named("categoryIdToCategory")
     default CategoryEntity categoryIdToCategory(UUID categoryId) {
-        if (categoryId == null) {
-            return null;
-        }
-        CategoryEntity category = new CategoryEntity();
-        category.setCategoryId(categoryId);
-        return category;
+        return Optional.ofNullable(categoryId)
+                .map(id -> {
+                    CategoryEntity categoryEntity = new CategoryEntity();
+                    categoryEntity.setCategoryId(id);
+                    return categoryEntity;
+                })
+                .orElse(null);
     }
 }

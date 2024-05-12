@@ -1,11 +1,12 @@
 package com.example.finance.service;
 
 import com.example.finance.exception.model.BackendException;
+import com.example.finance.factory.UserMockFactory;
 import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
-import com.example.finance.model.enums.UserRole;
 import com.example.finance.repository.UserAccountRepository;
+import com.example.finance.utils.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,13 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,71 +39,64 @@ class UserAccountServiceTest {
 
     @Test
     void getByLoginAndPassword_Success() {
-        String login = "user1";
-        String password = "pass";
-        UserAccountEntity entity = new UserAccountEntity();
-        entity.setLogin(login);
-        entity.setPassword(password);
+        //GIVEN
+        UserAccountEntity entity = UserMockFactory.createUserEntity();
 
-        UUID userId = UUID.randomUUID();
-        List<UserRole> roles = Collections.singletonList(UserRole.USER);
-
-        when(userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(login))
+        //WHEN
+        when(userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(TestConstants.USER_LOGIN))
                 .thenReturn(Optional.of(entity));
-        when(userAccountMapper.toDto(any())).thenReturn(new UserAccountDto(userId, login, roles));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
 
-        assertDoesNotThrow(() -> userAccountService.getByLoginAndPassword(login, password));
+        //THEN
+        assertDoesNotThrow(() -> userAccountService.getByLoginAndPassword(TestConstants.USER_LOGIN, TestConstants.USER_PASSWORD));
     }
 
     @Test
     void create_Success() {
-        UserAccountEntity entity = new UserAccountEntity();
-        entity.setPassword("password");
-        entity.setLogin("newUser");
-        entity.setEmail("newUser@example.com");
+        // GIVEN
+        UserAccountEntity entity = UserMockFactory.createUserEntity();
 
-        UUID userId = UUID.randomUUID();
-        List<UserRole> roles = Collections.singletonList(UserRole.USER);
 
-        when(passwordEncoder.encode("password")).thenReturn("encodedPassword");
+        //WHEN
+        when(passwordEncoder.encode(TestConstants.USER_PASSWORD)).thenReturn(TestConstants.USER_ENCODED_PASSWORD);
         when(userAccountRepository.save(any(UserAccountEntity.class))).thenReturn(entity);
-        when(userAccountMapper.toDto(any())).thenReturn(new UserAccountDto(userId, "newUser", roles));
-
+        when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
         UserAccountDto dto = userAccountService.create(entity);
+
+        //THEN
         assertNotNull(dto);
-        verify(passwordEncoder).encode("password");
+        verify(passwordEncoder).encode(TestConstants.USER_PASSWORD);
         verify(userAccountRepository).save(entity);
         verify(userAccountMapper).toDto(entity);
     }
 
     @Test
     void getById_Success() {
-        UUID id = UUID.randomUUID();
-        UserAccountEntity entity = new UserAccountEntity();
-        entity.setUserId(id);
-        entity.setLogin("testUser");
-        entity.setEmail("testUser@example.com");
+        // GIVEN
+        UserAccountEntity entity = UserMockFactory.createUserEntity();
 
-        List<UserRole> roles = Collections.singletonList(UserRole.USER);
-
-        when(userAccountRepository.findById(id)).thenReturn(Optional.of(entity));
+        // WHEN
+        when(userAccountRepository.findById(TestConstants.USER_UUID)).thenReturn(Optional.of(entity));
         when(userAccountMapper.toDto(any(UserAccountEntity.class)))
-                .thenReturn(new UserAccountDto(id, entity.getLogin(), roles));
+                .thenReturn(UserMockFactory.createUserDto());
 
-        UserAccountDto dto = userAccountService.getById(id);
+        UserAccountDto dto = userAccountService.getById(TestConstants.USER_UUID);
 
+        //THEN
         assertNotNull(dto);
-        assertEquals(id, dto.userId());
-        verify(userAccountRepository).findById(id);
+        assertEquals(TestConstants.USER_UUID, dto.userId());
+        verify(userAccountRepository).findById(TestConstants.USER_UUID);
         verify(userAccountMapper).toDto(entity);
     }
 
     @Test
     void deleteUser_NotFound() {
-        UUID id = UUID.randomUUID();
-        when(userAccountRepository.findById(id)).thenReturn(Optional.empty());
+        //GIVEN WHEN
+        when(userAccountRepository.findById(TestConstants.USER_UUID)).thenReturn(Optional.empty());
 
-        assertThrows(BackendException.class, () -> userAccountService.deleteUser(id));
+        //THEN
+        assertThrows(BackendException.class, () -> userAccountService.deleteUser(TestConstants.USER_UUID));
     }
 
 }

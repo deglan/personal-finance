@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mapper(componentModel = ApplicationConstants.SPRING_COMPONENT_MODEL, uses = UserAccountMapper.class)
@@ -23,11 +24,12 @@ public interface ReportMapper {
 
     @Named("userIdToUserAccountEntity")
     default UserAccountEntity fromUserId(UUID userId) {
-        if (userId == null) {
-            return null;
-        }
-        UserAccountEntity userAccount = new UserAccountEntity();
-        userAccount.setUserId(userId);
-        return userAccount;
+        return Optional.ofNullable(userId)
+                .map(id -> {
+                    UserAccountEntity user = new UserAccountEntity();
+                    user.setUserId(id);
+                    return user;
+                })
+                .orElse(null);
     }
 }

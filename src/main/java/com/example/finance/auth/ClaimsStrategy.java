@@ -6,7 +6,9 @@ import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.model.enums.UserRole;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum ClaimsStrategy {
@@ -36,23 +38,22 @@ public enum ClaimsStrategy {
     ROLE {
         @Override
         public String createClaim(UserAccountEntity user) {
-            if (user.getRole() == null) {
-                return null;
-            }
-            return user.getRole().stream()
-                    .map(Enum::toString)
-                    .collect(Collectors.joining(SEPARATOR));
+            return Optional.ofNullable(user.getRole())
+                    .map(roles -> roles.stream()
+                            .map(Enum::toString)
+                            .collect(Collectors.joining(SEPARATOR)))
+                    .orElse(null);
         }
 
         @Override
         public Object getClaim(DecodedJWT decodedJWT) {
-            String rolesString = super.decodeClaim(decodedJWT).asString();
-            if (rolesString == null) {
-                return null;
-            }
-            return Arrays.stream(rolesString.split(SEPARATOR))
-                    .map(UserRole::from)
-                    .toList();
+            Claim claim = super.decodeClaim(decodedJWT);
+            String rolesString = claim.asString();
+            return Optional.ofNullable(rolesString)
+                    .map(rs -> Arrays.stream(rs.split(SEPARATOR))
+                            .map(UserRole::from)
+                            .toList())
+                    .orElse(null);
         }
     };
 
