@@ -20,15 +20,11 @@ public class BudgetEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "BUDGET_ID")
     private UUID budgetId;
-    @ManyToOne(
-            fetch = FetchType.EAGER
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserAccountEntity userAccountEntity;
-    @ManyToOne(
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "CATEGORY_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private CategoryEntity categoryEntity;
     @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,14 +70,11 @@ public class TransactionService {
         return transactionMapper.toDto(transactionDb);
     }
 
-    //TODO wróć do delete
+    @Transactional
     public void deleteTransaction(UUID id) {
         TransactionsEntity transactionsEntity = transactionsRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        transactionsRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
         transactionsRepository.delete(transactionsEntity);
-//        entityManager.flush();
     }
 
     private List<TransactionDto> toDtoList(List<TransactionsEntity> transactionsEntities) {

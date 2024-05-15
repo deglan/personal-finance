@@ -25,21 +25,13 @@ public class CategoryEntity {
     @Column(name = "TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
-    @ManyToOne(
-            fetch = FetchType.EAGER
-    )
-    @JoinColumn(name = "USER_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID", nullable = false)
     private UserAccountEntity userAccountEntity;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
-    )
-    private List<BudgetEntity> budgetEntities;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "categoryEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionsEntity> transactionsEntities;
+    @OneToMany(mappedBy = "categoryEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BudgetEntity> budgetEntities;
     @Column(name = "DESCRIPTION")
     private String description;
 }

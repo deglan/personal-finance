@@ -70,7 +70,9 @@ public class CategoryService {
     }
 
     public void deleteCategory(UUID id) {
-        categoriesRepository.deleteById(id);
+        CategoryEntity categoryEntity = categoriesRepository.findById(id)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+        categoriesRepository.delete(categoryEntity);
     }
 
     private List<CategoryDto> toDtoList(List<CategoryEntity> categoryEntities) {

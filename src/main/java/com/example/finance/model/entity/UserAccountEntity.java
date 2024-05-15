@@ -36,29 +36,13 @@ public class UserAccountEntity {
     private LocalDateTime createdDate;
     @Column(name = "LAST_LOGIN")
     private LocalDateTime lastLogin;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            mappedBy = "userAccountEntity",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryEntity> categoryEntities;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            mappedBy = "userAccountEntity",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BudgetEntity> budgetEntities;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            mappedBy = "userAccountEntity",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionsEntity> transactionsEntities;
-    @OneToMany(
-            fetch = FetchType.EAGER,
-            mappedBy = "userAccountEntity",
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReportEntity> reportEntities;
     @Column(name = "ROLE")
     @Convert(converter = RoleConverter.class)

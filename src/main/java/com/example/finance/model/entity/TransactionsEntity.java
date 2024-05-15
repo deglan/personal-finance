@@ -21,10 +21,10 @@ public class TransactionsEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "TRANSACTION_ID")
     private UUID transactionID;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserAccountEntity userAccountEntity;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID", nullable = false)
     private CategoryEntity categoryEntity;
     @Column(name = "AMOUNT", nullable = false)

@@ -67,6 +67,8 @@ public class BudgetService {
     }
 
     public void deleteBudget(UUID id) {
+        budgetRepository.findById(id)
+                        .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
     }
 

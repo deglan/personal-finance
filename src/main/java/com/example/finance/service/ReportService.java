@@ -2,10 +2,7 @@ package com.example.finance.service;
 
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.ReportMapper;
-import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.ReportDto;
-import com.example.finance.model.entity.BudgetEntity;
-import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.ReportEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.ReportRepository;
@@ -16,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,8 +61,11 @@ public class ReportService {
         reportRepository.save(reportDb);
         return reportMapper.toDto(reportDb);
     }
+
     public void deleteReport(UUID id) {
-        reportRepository.deleteById(id);
+        ReportEntity reportEntity = reportRepository.findById(id)
+                .orElseThrow(() -> new BackendException(MESSAGE));
+        reportRepository.delete(reportEntity);
     }
 
     private List<ReportDto> toDtoList(List<ReportEntity> reportEntities) {
