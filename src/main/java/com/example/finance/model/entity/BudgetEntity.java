@@ -2,6 +2,7 @@ package com.example.finance.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class BudgetEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "BUDGET_ID")
     private UUID budgetId;
     @ManyToOne(

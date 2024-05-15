@@ -65,8 +65,8 @@ public class CategoryService {
         categoryDb.setName(category.name());
         categoryDb.setTransactionType(category.transactionType());
         categoryDb.setDescription(category.description());
-        categoriesRepository.save(categoryDb);
-        return categoryMapper.toDto(categoryDb);
+        CategoryEntity savedCategory = categoriesRepository.save(categoryDb);
+        return categoryMapper.toDto(savedCategory);
     }
 
     public void deleteCategory(UUID id) {

@@ -26,8 +26,8 @@ public class ReportController {
 
     @GetMapping(value = ApiEndpoints.Endpoints.GET_REPORTS_BY_USER_ID)
     public ResponseEntity<List<ReportDto>> getReportsByUserId(@PathVariable UUID id) {
-        List<ReportDto> byUserId = reportService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
+        List<ReportDto> reportsByUserId = reportService.getByUserId(id);
+        return ResponseEntity.ok(reportsByUserId);
     }
 
     @PostMapping(value = ApiEndpoints.Endpoints.CREATE)

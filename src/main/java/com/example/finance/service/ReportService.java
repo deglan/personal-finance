@@ -49,12 +49,12 @@ public class ReportService {
                 .orElseThrow(() -> new BackendException("User not found"));
         ReportEntity reportEntity = reportMapper.toEntity(report);
         reportEntity.setUserAccountEntity(userAccountEntity);
-        reportRepository.save(reportEntity);
+        ReportEntity savedReport = reportRepository.save(reportEntity);
         log.info("Saved report with ID {} and type {} for user with ID {}",
                 reportEntity.getReportId(),
                 reportEntity.getReportType(),
                 reportEntity.getUserAccountEntity().getUserId());
-        return reportMapper.toDto(reportEntity);
+        return reportMapper.toDto(savedReport);
     }
 
     @Transactional

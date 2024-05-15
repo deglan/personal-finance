@@ -26,8 +26,8 @@ public class TransactionController {
 
     @GetMapping(value = ApiEndpoints.Endpoints.GET_TRANSACTIONS_BY_USER_ID)
     public ResponseEntity<List<TransactionDto>> getTransactionsByUserId(@PathVariable UUID id) {
-        List<TransactionDto> byUserId = transactionService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
+        List<TransactionDto> transactionsByUserId = transactionService.getByUserId(id);
+        return ResponseEntity.ok(transactionsByUserId);
     }
 
     @PostMapping(value = ApiEndpoints.Endpoints.CREATE)

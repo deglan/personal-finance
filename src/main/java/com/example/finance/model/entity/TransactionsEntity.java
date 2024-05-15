@@ -18,7 +18,7 @@ import java.util.UUID;
 public class TransactionsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "TRANSACTION_ID")
     private UUID transactionID;
     @ManyToOne

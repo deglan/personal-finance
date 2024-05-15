@@ -38,30 +38,27 @@ class UserAccountServiceTest {
     private UserAccountService userAccountService;
 
     @Test
-    void getByLoginAndPassword_Success() {
+    void getByLoginAndPassword_loginProcedure_Success() {
         //GIVEN
         UserAccountEntity entity = UserMockFactory.createUserEntity();
-
-        //WHEN
         when(userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(TestConstants.USER_LOGIN))
                 .thenReturn(Optional.of(entity));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
 
-        //THEN
+        //WHEN THEN
         assertDoesNotThrow(() -> userAccountService.getByLoginAndPassword(TestConstants.USER_LOGIN, TestConstants.USER_PASSWORD));
     }
 
     @Test
-    void create_Success() {
-        // GIVEN
+    void create_createUser_Success() {
+        //GIVEN
         UserAccountEntity entity = UserMockFactory.createUserEntity();
-
-
-        //WHEN
         when(passwordEncoder.encode(TestConstants.USER_PASSWORD)).thenReturn(TestConstants.USER_ENCODED_PASSWORD);
         when(userAccountRepository.save(any(UserAccountEntity.class))).thenReturn(entity);
         when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
+
+        //WHEN
         UserAccountDto dto = userAccountService.create(entity);
 
         //THEN
@@ -72,15 +69,13 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void getById_Success() {
+    void getById_findUserById_Success() {
         // GIVEN
         UserAccountEntity entity = UserMockFactory.createUserEntity();
-
-        // WHEN
         when(userAccountRepository.findById(TestConstants.USER_UUID)).thenReturn(Optional.of(entity));
         when(userAccountMapper.toDto(any(UserAccountEntity.class)))
                 .thenReturn(UserMockFactory.createUserDto());
-
+        // WHEN
         UserAccountDto dto = userAccountService.getById(TestConstants.USER_UUID);
 
         //THEN
@@ -91,7 +86,7 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void deleteUser_NotFound() {
+    void deleteUser_deleteUserById_NotFound() {
         //GIVEN WHEN
         when(userAccountRepository.findById(TestConstants.USER_UUID)).thenReturn(Optional.empty());
 

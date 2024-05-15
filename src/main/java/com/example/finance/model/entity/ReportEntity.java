@@ -16,7 +16,7 @@ import java.util.UUID;
 public class ReportEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "REPORT_ID")
     private UUID reportId;
     @ManyToOne

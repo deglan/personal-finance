@@ -40,7 +40,6 @@ public class BudgetService {
                 .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
     }
 
-
     public BudgetDto create(BudgetDto budgetDto) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(budgetDto.userId())
                 .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
@@ -49,11 +48,11 @@ public class BudgetService {
         BudgetEntity budgetEntity = budgetMapper.toEntity(budgetDto);
         budgetEntity.setUserAccountEntity(userAccountEntity);
         budgetEntity.setCategoryEntity(categoryEntity);
-        budgetRepository.save(budgetEntity);
+        BudgetEntity savedEntity = budgetRepository.save(budgetEntity);
         log.debug(String.format("Created Budget with id %s and amount %s",
-                budgetEntity.getBudgetId(),
-                budgetEntity.getAmount()));
-        return budgetMapper.toDto(budgetEntity);
+                savedEntity.getBudgetId(),
+                savedEntity.getAmount()));
+        return budgetMapper.toDto(savedEntity);
     }
 
     @Transactional

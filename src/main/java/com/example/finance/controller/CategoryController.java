@@ -33,8 +33,8 @@ public class CategoryController {
 
     @GetMapping(value = ApiEndpoints.Endpoints.GET_CATEGORIES_BY_USER_ID)
     public ResponseEntity<List<CategoryDto>> getCategoriesByUserId(@PathVariable UUID id) {
-        List<CategoryDto> byUserId = categoryService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
+        List<CategoryDto> categoriesByUserId = categoryService.getByUserId(id);
+        return ResponseEntity.ok(categoriesByUserId);
     }
 
     @PostMapping(value = ApiEndpoints.Endpoints.CREATE)

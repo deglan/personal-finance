@@ -52,14 +52,12 @@ public class TransactionService {
         TransactionsEntity transactionsEntity = transactionMapper.toEntity(transaction);
         transactionsEntity.setUserAccountEntity(userAccountEntity);
         transactionsEntity.setCategoryEntity(categoryEntity);
-        transactionsRepository.save(transactionsEntity);
-
+        TransactionsEntity savedTransaction = transactionsRepository.save(transactionsEntity);
         log.info("Saved transaction with ID {} and type {} for user with ID {}",
                 transactionsEntity.getTransactionID(),
                 transactionsEntity.getTransactionType(),
                 transactionsEntity.getUserAccountEntity().getUserId());
-
-        return transactionMapper.toDto(transactionsEntity);
+        return transactionMapper.toDto(savedTransaction);
     }
 
     @Transactional

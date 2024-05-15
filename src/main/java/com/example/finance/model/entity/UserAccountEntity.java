@@ -21,7 +21,7 @@ import java.util.UUID;
 public class UserAccountEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "USER_ID")
     private UUID userId;
     @Column(name = "LOGIN", unique = true, length = 50, nullable = false)

@@ -17,7 +17,7 @@ import java.util.UUID;
 public class CategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "CATEGORY_ID", updatable = false, nullable = false)
     private UUID categoryId;
     @Column(name = "NAME", nullable = false)

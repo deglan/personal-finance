@@ -27,12 +27,12 @@ public class BudgetController {
 
     @GetMapping(value = ApiEndpoints.Endpoints.GET_BUDGETS_BY_USER_ID)
     public ResponseEntity<List<BudgetDto>> getBudgetsByUserId(@PathVariable UUID id) {
-        List<BudgetDto> byUserId = budgetService.getByUserId(id);
-        return ResponseEntity.ok(byUserId);
+        List<BudgetDto> budgetsByUserId = budgetService.getByUserId(id);
+        return ResponseEntity.ok(budgetsByUserId);
     }
 
     @PostMapping(ApiEndpoints.Endpoints.CREATE)
-    public ResponseEntity<BudgetDto> create(@RequestBody @Valid BudgetDto budgetDto) {
+    public ResponseEntity<BudgetDto> create(@RequestBody BudgetDto budgetDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(budgetService.create(budgetDto));
     }
