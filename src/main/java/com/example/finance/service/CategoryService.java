@@ -87,7 +87,7 @@ public class CategoryService {
                 .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_BUDGET));
         BudgetEntity toBudget = budgetRepository
                 .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(userId, toCategory.getCategoryId(), toBudgetId)
-                .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_BUDGET));
+                .orElseThrow(() -> new BackendException(MessageConstants.DESTINATION_BUDGET));
         if (fromBudget.getAmount().compareTo(amount) < 0) {
             throw new BackendException(MessageConstants.INSUFFICIENT_FUNDS);
         }

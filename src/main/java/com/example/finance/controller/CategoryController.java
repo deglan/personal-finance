@@ -3,7 +3,6 @@ package com.example.finance.controller;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.TransferFunds;
-import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
