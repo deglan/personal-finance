@@ -33,7 +33,7 @@ public class TransactionService {
 
 
     public List<TransactionDto> getByUserId(UUID userId) {
-        return toDtoList(transactionsRepository.findByUserAccountEntityUserId(userId));
+        return transactionMapper.toDtoList(transactionsRepository.findByUserAccountEntityUserId(userId));
     }
 
     public TransactionDto getById(UUID id) {
@@ -66,8 +66,8 @@ public class TransactionService {
         transactionDb.setAmount(transaction.amount());
         transactionDb.setTransactionType(transaction.transactionType());
         transactionDb.setDescription(transaction.description());
-        transactionsRepository.save(transactionDb);
-        return transactionMapper.toDto(transactionDb);
+        TransactionsEntity savedTransaction = transactionsRepository.save(transactionDb);
+        return transactionMapper.toDto(savedTransaction);
     }
 
     @Transactional
@@ -75,11 +75,5 @@ public class TransactionService {
         TransactionsEntity transactionsEntity = transactionsRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
         transactionsRepository.delete(transactionsEntity);
-    }
-
-    private List<TransactionDto> toDtoList(List<TransactionsEntity> transactionsEntities) {
-        return transactionsEntities.stream()
-                .map(transactionMapper::toDto)
-                .toList();
     }
 }

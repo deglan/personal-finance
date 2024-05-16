@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,6 +47,7 @@ public class UserAccountService {
         return userAccountMapper.toDto(user);
     }
 
+    @Transactional
     public UserAccountDto create(UserAccountEntity userAccount) {
         String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
         userAccount.setPassword(encodedPassword);
@@ -55,6 +57,7 @@ public class UserAccountService {
         return userAccountMapper.toDto(userDb);
     }
 
+    @Transactional
     public UserAccountDto updateUser(UUID id, UserAccountEntity userAccountEntity) {
         UserAccountEntity userAccountDb = userAccountRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
@@ -62,16 +65,16 @@ public class UserAccountService {
         userAccountDb.setPassword(encodedPassword);
         userAccountDb.setLogin(userAccountEntity.getLogin());
         userAccountDb.setEmail(userAccountEntity.getEmail());
-        userAccountRepository.save(userAccountDb);
-        return userAccountMapper.toDto(userAccountDb);
+        UserAccountEntity savedUserAccountEntity = userAccountRepository.save(userAccountDb);
+        return userAccountMapper.toDto(savedUserAccountEntity);
     }
 
+    @Transactional
     public UserAccountDto deleteUser(UUID id) {
         UserAccountEntity userAccountDb = userAccountRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        setDeleteUser(userAccountDb);
-        userAccountRepository.save(userAccountDb);
-        return userAccountMapper.toDto(userAccountDb);
+        UserAccountEntity savedUserAccountEntity = setDeleteUser(userAccountDb);
+        return userAccountMapper.toDto(savedUserAccountEntity);
     }
 
     private UserAccountEntity updateLastLogin(UserAccountEntity userAccountEntity) {

@@ -7,7 +7,6 @@ import com.example.finance.model.entity.ReportEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.ReportRepository;
 import com.example.finance.repository.UserAccountRepository;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,10 +26,9 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final UserAccountRepository userAccountRepository;
     private final ReportMapper reportMapper;
-    private final EntityManager entityManager;
 
     public List<ReportDto> getByUserId(UUID userId) {
-        return toDtoList(reportRepository.findByUserAccountEntityUserId(userId));
+        return reportMapper.toDtoList(reportRepository.findByUserAccountEntityUserId(userId));
     }
 
     public ReportDto getById(UUID id) {
@@ -62,6 +60,7 @@ public class ReportService {
         return reportMapper.toDto(reportDb);
     }
 
+    @Transactional
     public void deleteReport(UUID id) {
         ReportEntity reportEntity = reportRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));

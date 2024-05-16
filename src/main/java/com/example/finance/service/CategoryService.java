@@ -44,18 +44,18 @@ public class CategoryService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional
     public CategoryDto create(CategoryDto category) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(category.userId())
                 .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
         CategoryEntity categoryEntity = categoryMapper.toEntity(category);
         categoryEntity.setUserAccountEntity(userAccountEntity);
-        categoriesRepository.save(categoryEntity);
+        CategoryEntity savedCategory = categoriesRepository.save(categoryEntity);
         log.info("Saved category with ID {} and type {} for user with ID {}",
                 categoryEntity.getCategoryId(),
                 categoryEntity.getTransactionType(),
                 categoryEntity.getUserAccountEntity().getUserId());
-        return categoryMapper.toDto(categoryEntity);
+        return categoryMapper.toDto(savedCategory);
     }
 
     @Transactional
@@ -69,6 +69,7 @@ public class CategoryService {
         return categoryMapper.toDto(savedCategory);
     }
 
+    @Transactional
     public void deleteCategory(UUID id) {
         CategoryEntity categoryEntity = categoriesRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));

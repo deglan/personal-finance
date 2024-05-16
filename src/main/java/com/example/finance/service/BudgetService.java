@@ -31,7 +31,7 @@ public class BudgetService {
     private final BudgetMapper budgetMapper;
 
     public List<BudgetDto> getByUserId(UUID userId) {
-        return toDtoList(budgetRepository.findByUserAccountEntityUserId(userId));
+        return budgetMapper.toDtoList(budgetRepository.findByUserAccountEntityUserId(userId));
     }
 
     public BudgetDto getById(UUID id) {
@@ -40,6 +40,7 @@ public class BudgetService {
                 .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
     }
 
+    @Transactional
     public BudgetDto create(BudgetDto budgetDto) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(budgetDto.userId())
                 .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
@@ -62,23 +63,14 @@ public class BudgetService {
         budgetDb.setAmount(budgetDto.amount());
         budgetDb.setMonth(budgetDb.getMonth());
         budgetDb.setYear(budgetDb.getYear());
-        budgetRepository.save(budgetDb);
-        return budgetMapper.toDto(budgetDb);
+        BudgetEntity savedBudget = budgetRepository.save(budgetDb);
+        return budgetMapper.toDto(savedBudget);
     }
 
+    @Transactional
     public void deleteBudget(UUID id) {
         budgetRepository.findById(id)
                         .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
-    }
-
-    private List<BudgetDto> toDtoList(List<BudgetEntity> budgetEntities) {
-        return budgetEntities.stream()
-                .map(budgetMapper::toDto)
-                .toList();
-    }
-
-    public BudgetDto toDto(BudgetEntity budgetEntity) {
-        return budgetMapper.toDto(budgetEntity);
     }
 }
