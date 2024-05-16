@@ -59,9 +59,9 @@ public class ReportService {
     public ReportDto updateReport(UUID id, ReportDto reportDto) {
         ReportEntity reportDb = reportRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        reportDb.setReportType(reportDb.getReportType());
-        reportRepository.save(reportDb);
-        return reportMapper.toDto(reportDb);
+        reportDb.setReportType(reportDto.reportType());
+        ReportEntity savedReport = reportRepository.save(reportDb);
+        return reportMapper.toDto(savedReport);
     }
 
     public void deleteReport(UUID id) {

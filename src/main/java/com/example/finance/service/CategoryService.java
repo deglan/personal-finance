@@ -10,7 +10,6 @@ import com.example.finance.repository.BudgetRepository;
 import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class CategoryService {
     private final UserAccountRepository userAccountRepository;
     private final BudgetRepository budgetRepository;
     private final CategoryMapper categoryMapper;
-    private final EntityManager entityManager;
 
     public List<CategoryDto> getAll() {
         return toDtoList(categoriesRepository.findAll());
