@@ -3,6 +3,7 @@ package com.example.finance.service;
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.CategoryMapper;
 import com.example.finance.model.dto.CategoryDto;
+import com.example.finance.model.dto.TransferFunds;
 import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.UserAccountEntity;
@@ -72,27 +73,26 @@ public class CategoryService {
     }
 
     @Transactional
-    public void transferFundsBetweenCategories(UUID userId, String fromCategoryName, String toCategoryName,
-                                               BigDecimal amount, UUID fromBudgetId, UUID toBudgetId) {
+    public void transferFundsBetweenCategories(TransferFunds transferFunds) {
         CategoryEntity fromCategory = categoriesRepository
-                .findByUserAccountEntityUserIdAndName(userId, fromCategoryName)
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.fromCategoryName())
                 .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_CATEGORY));
         CategoryEntity toCategory = categoriesRepository
-                .findByUserAccountEntityUserIdAndName(userId, toCategoryName)
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.toCategoryName())
                 .orElseThrow(() -> new BackendException(MessageConstants.DESTINATION_CATEGORY));
         BudgetEntity fromBudget = budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(userId, fromCategory.getCategoryId(), fromBudgetId)
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(), fromCategory.getCategoryId(), transferFunds.fromBudgetId())
                 .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_BUDGET));
         BudgetEntity toBudget = budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(userId, toCategory.getCategoryId(), toBudgetId)
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(), toCategory.getCategoryId(), transferFunds.fromBudgetId())
                 .orElseThrow(() -> new BackendException(MessageConstants.DESTINATION_BUDGET));
-        if (fromBudget.getAmount().compareTo(amount) < 0) {
+        BigDecimal fromAmount = fromBudget.getAmount();
+        if (fromAmount.compareTo(transferFunds.amount()) < 0) {
             throw new BackendException(MessageConstants.INSUFFICIENT_FUNDS);
         }
-        fromBudget.setAmount(fromBudget.getAmount().subtract(amount));
-        toBudget.setAmount(toBudget.getAmount().add(amount));
-        budgetRepository.save(fromBudget);
-        budgetRepository.save(toBudget);
+        fromBudget.setAmount(fromBudget.getAmount().subtract(transferFunds.amount()));
+        toBudget.setAmount(toBudget.getAmount().add(transferFunds.amount()));
+        budgetRepository.saveAll(List.of(fromBudget, toBudget));
     }
 
     @Transactional

@@ -47,14 +47,7 @@ public class CategoryController {
 
     @PostMapping(ApiEndpoints.Endpoints.TRANSFER)
     public ResponseEntity<String> transferFunds(@RequestBody @Valid TransferFunds request) {
-        categoryService.transferFundsBetweenCategories(
-                request.userId(),
-                request.fromCategoryName(),
-                request.toCategoryName(),
-                request.amount(),
-                request.fromBudgetId(),
-                request.toBudgetId()
-        );
+        categoryService.transferFundsBetweenCategories(request);
         return ResponseEntity.ok("Funds transfered successfully");
     }
 

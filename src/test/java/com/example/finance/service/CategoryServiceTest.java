@@ -3,8 +3,10 @@ package com.example.finance.service;
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.factory.BudgetMockFactory;
 import com.example.finance.factory.CategoryMockFactory;
+import com.example.finance.factory.TransferFundsMockFactory;
 import com.example.finance.factory.UserMockFactory;
 import com.example.finance.mapper.CategoryMapper;
+import com.example.finance.model.dto.TransferFunds;
 import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.UserAccountEntity;
@@ -16,14 +18,17 @@ import com.example.finance.utils.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.*;
 import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,37 +51,37 @@ class CategoryServiceTest {
 
     @Test
     void transferFunds_changeFundsBetweenCategories_success() {
-        //GIVEN
+        // GIVEN
         UserAccountEntity user = UserMockFactory.createUserEntity();
         CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntity(user);
         CategoryEntity toCategory = CategoryMockFactory.createCategoryEntity(user);
         BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
         BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
-
+        TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
         fromBudget.setAmount(BigDecimal.valueOf(500.00));
         toBudget.setAmount(BigDecimal.valueOf(300.00));
+
+        // Mock repository responses
         when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(TestConstants.USER_UUID, TestConstants.FROM_CATEGORY_NAME))
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.fromCategoryName()))
                 .thenReturn(Optional.of(fromCategory));
         when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(TestConstants.USER_UUID, TestConstants.TO_CATEGORY_NAME))
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.toCategoryName()))
                 .thenReturn(Optional.of(toCategory));
         when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(TestConstants.USER_UUID,
-                        fromCategory.getCategoryId(), TestConstants.TRANSFER_FROM_BUDGET_ID))
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
+                        fromCategory.getCategoryId(), transferFunds.fromBudgetId()))
                 .thenReturn(Optional.of(fromBudget));
         when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(TestConstants.USER_UUID,
-                        toCategory.getCategoryId(), TestConstants.TRANSFER_TO_BUDGET_ID))
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
+                        toCategory.getCategoryId(), transferFunds.toBudgetId()))
                 .thenReturn(Optional.of(toBudget));
 
-        //WHEN
-        categoryService
-                .transferFundsBetweenCategories(TestConstants.USER_UUID, TestConstants.FROM_CATEGORY_NAME,
-                        TestConstants.TO_CATEGORY_NAME, TestConstants.TRANSFER_AMOUNT,
-                        TestConstants.TRANSFER_FROM_BUDGET_ID, TestConstants.TRANSFER_TO_BUDGET_ID);
 
-        //THEN
+        // WHEN
+        categoryService.transferFundsBetweenCategories(transferFunds);
+
+        // THEN
         assertEquals(BigDecimal.valueOf(400.00), fromBudget.getAmount());
         assertEquals(BigDecimal.valueOf(400.00), toBudget.getAmount());
     }
@@ -89,32 +94,31 @@ class CategoryServiceTest {
         CategoryEntity toCategory = CategoryMockFactory.createCategoryEntity(user);
         BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
         BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
+        TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
 
         fromBudget.setAmount(BigDecimal.valueOf(50.00));
         toBudget.setAmount(BigDecimal.valueOf(300.00));
         when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(TestConstants.USER_UUID,
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(),
                         TestConstants.FROM_CATEGORY_NAME))
                 .thenReturn(Optional.of(fromCategory));
         when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(TestConstants.USER_UUID,
+                .findByUserAccountEntityUserIdAndName(transferFunds.userId(),
                         TestConstants.TO_CATEGORY_NAME))
                 .thenReturn(Optional.of(toCategory));
         when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(TestConstants.USER_UUID,
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
                         fromCategory.getCategoryId(), TestConstants.TRANSFER_FROM_BUDGET_ID))
                 .thenReturn(Optional.of(fromBudget));
         when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(TestConstants.USER_UUID,
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
                         toCategory.getCategoryId(), TestConstants.TRANSFER_TO_BUDGET_ID))
                 .thenReturn(Optional.of(toBudget));
 
         //WHEN, THEN
         BackendException exception = assertThrows(BackendException.class, () ->
                 categoryService
-                        .transferFundsBetweenCategories(TestConstants.USER_UUID, TestConstants.FROM_CATEGORY_NAME,
-                                TestConstants.TO_CATEGORY_NAME, TestConstants.TRANSFER_AMOUNT,
-                                TestConstants.TRANSFER_FROM_BUDGET_ID, TestConstants.TRANSFER_TO_BUDGET_ID));
+                        .transferFundsBetweenCategories(transferFunds));
         assertEquals(MessageConstants.INSUFFICIENT_FUNDS, exception.getMessage());
     }
 }
