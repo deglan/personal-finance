@@ -6,6 +6,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record TransactionDto(UUID transactionID, UserAccountDto userAccountDto, CategoryDto categoryDto,
-                             BigDecimal amount, TransactionType transactionType, LocalDate date, String description) {
+public record TransactionDto(UUID transactionID,
+                             UUID userId,
+                             UUID categoryId,
+                             BigDecimal amount,
+                             TransactionType transactionType,
+                             LocalDate date,
+                             String description) {
 }

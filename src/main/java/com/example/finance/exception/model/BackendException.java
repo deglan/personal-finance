@@ -3,10 +3,10 @@ package com.example.finance.exception.model;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class AuthorizationException extends RuntimeException {
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class BackendException extends RuntimeException {
 
-    public AuthorizationException(String message) {
+    public BackendException(String message) {
         super(message);
     }
 }

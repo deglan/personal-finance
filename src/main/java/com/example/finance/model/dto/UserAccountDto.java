@@ -1,8 +1,11 @@
 package com.example.finance.model.dto;
 
-import java.util.Set;
+import com.example.finance.model.enums.UserRole;
+
+import java.util.List;
 import java.util.UUID;
 
-
-public record UserAccountDto(UUID userId, String login, Set<RoleDto> roles) {
+public record UserAccountDto(UUID userId,
+                             String login,
+                             List<UserRole> role) {
 }

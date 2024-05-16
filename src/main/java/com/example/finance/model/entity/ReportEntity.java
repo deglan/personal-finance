@@ -1,9 +1,7 @@
 package com.example.finance.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -11,18 +9,19 @@ import java.util.UUID;
 @Entity
 @Table(name = "REPORT")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@MappedSuperclass
+@ToString(exclude = {"userAccountEntity"})
 public class ReportEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "REPORT_ID")
     private UUID reportId;
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
-    private UserAccountEntity user;
+    private UserAccountEntity userAccountEntity;
     @Column(name = "REPORT_TYPE", nullable = false)
     private String reportType;
     @Column(name = "START_DATE", nullable = false)

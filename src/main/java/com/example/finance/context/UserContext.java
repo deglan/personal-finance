@@ -1,11 +1,11 @@
 package com.example.finance.context;
 
-import com.example.finance.model.entity.RoleEntity;
+import com.example.finance.model.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,5 +14,5 @@ public class UserContext {
 
     private final Long id;
     private final String userName;
-    private final Set<RoleEntity> roleEntity;
+    private final List<UserRole> role;
 }

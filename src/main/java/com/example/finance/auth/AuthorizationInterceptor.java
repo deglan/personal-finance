@@ -3,7 +3,7 @@ package com.example.finance.auth;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.finance.business.ApiEndpoints;
-import com.example.finance.model.entity.RoleEntity;
+import com.example.finance.model.enums.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -28,8 +28,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         }
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         DecodedJWT decodedJWT = tokenService.verify(bearerToken);
-        List<RoleEntity> userRoleEntities = (List<RoleEntity>) ClaimsStrategy.ROLE.getClaim(decodedJWT);
-        if (!userRoleEntities.contains(apiEndpoint.getRoleEntity())) {
+        List<UserRole> userRole = (List<UserRole>) ClaimsStrategy.ROLE.getClaim(decodedJWT);
+        if (!userRole.contains(apiEndpoint.getRole())) {
             throw new JWTVerificationException("Unauthorized");
         }
         return true;
