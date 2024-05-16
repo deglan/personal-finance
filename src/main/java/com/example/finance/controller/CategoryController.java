@@ -2,8 +2,10 @@ package com.example.finance.controller;
 
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.CategoryDto;
+import com.example.finance.model.dto.TransferFunds;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,19 @@ public class CategoryController {
         CategoryDto categoryDto = categoryService.create(category);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(categoryDto);
+    }
+
+    @PostMapping(ApiEndpoints.Endpoints.TRANSFER)
+    public ResponseEntity<String> transferFunds(@RequestBody @Valid TransferFunds request) {
+        categoryService.transferFundsBetweenCategories(
+                request.userId(),
+                request.fromCategoryName(),
+                request.toCategoryName(),
+                request.amount(),
+                request.fromBudgetId(),
+                request.toBudgetId()
+        );
+        return ResponseEntity.ok("Funds transfered successfully");
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)

@@ -31,6 +31,7 @@ public enum ApiEndpoints {
     CATEGORIES_GET_ALL(API + CATEGORIES + GET_ALL, false, null),
     CATEGORIES_GET_BY_ID(API + CATEGORIES + ID, false, null),
     CATEGORIES_CREATE(API + CATEGORIES + CREATE, false, null),
+    CATEGORIES_TRANSFER(API + CATEGORIES + TRANSFER, false, null),
     CATEGORIES_UPDATE(API + CATEGORIES + ID, false, null),
     CATEGORIES_DELETE(API + CATEGORIES + ID, false, null),
 
@@ -93,8 +94,6 @@ public enum ApiEndpoints {
         public static final String GET_TRANSACTIONS_BY_USER_ID = "/{id}/transactions";
         public static final String GET_BUDGETS_BY_USER_ID = "/{id}/budgets";
         public static final String GET_REPORTS_BY_USER_ID = "/{id}/reports";
-
-
-
+        public static final String TRANSFER = "/transfer";
     }
 }
