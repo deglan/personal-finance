@@ -84,7 +84,7 @@ public class CategoryService {
                 .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(), fromCategory.getCategoryId(), transferFunds.fromBudgetId())
                 .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_BUDGET));
         BudgetEntity toBudget = budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(), toCategory.getCategoryId(), transferFunds.fromBudgetId())
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(), toCategory.getCategoryId(), transferFunds.toBudgetId())
                 .orElseThrow(() -> new BackendException(MessageConstants.DESTINATION_BUDGET));
         BigDecimal fromAmount = fromBudget.getAmount();
         if (fromAmount.compareTo(transferFunds.amount()) < 0) {

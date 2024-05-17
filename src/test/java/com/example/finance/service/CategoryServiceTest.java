@@ -15,20 +15,19 @@ import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import com.example.finance.utils.TestConstants;
+import com.example.finance.utils.TransferFundsSetupHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
 import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,16 +51,43 @@ class CategoryServiceTest {
     @Test
     void transferFunds_changeFundsBetweenCategories_success() {
         // GIVEN
+        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(500.00);
+        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
+        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
+
+        // WHEN
+        categoryService.transferFundsBetweenCategories(helper.getTransferFunds());
+
+        // THEN
+        assertEquals(BigDecimal.valueOf(400.00), helper.getFromBudget().getAmount());
+        assertEquals(BigDecimal.valueOf(400.00), helper.getToBudget().getAmount());
+    }
+
+    @Test
+    void transferFunds_changeFundsBetweenCategories_insufficientFunds() {
+        //GIVEN
+        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(50.00);
+        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
+        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
+
+        //WHEN, THEN
+        BackendException exception = assertThrows(BackendException.class, () ->
+                categoryService
+                        .transferFundsBetweenCategories(helper.getTransferFunds()));
+        assertEquals(MessageConstants.INSUFFICIENT_FUNDS, exception.getMessage());
+    }
+
+    private TransferFundsSetupHelper setupTransferFunds(BigDecimal fromBudgetAmount, BigDecimal toBudgetAmount) {
         UserAccountEntity user = UserMockFactory.createUserEntity();
         CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntity(user);
         CategoryEntity toCategory = CategoryMockFactory.createCategoryEntity(user);
         BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
         BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
         TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
-        fromBudget.setAmount(BigDecimal.valueOf(500.00));
-        toBudget.setAmount(BigDecimal.valueOf(300.00));
 
-        // Mock repository responses
+        fromBudget.setAmount(fromBudgetAmount);
+        toBudget.setAmount(toBudgetAmount);
+
         when(categoriesRepository
                 .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.fromCategoryName()))
                 .thenReturn(Optional.of(fromCategory));
@@ -77,48 +103,6 @@ class CategoryServiceTest {
                         toCategory.getCategoryId(), transferFunds.toBudgetId()))
                 .thenReturn(Optional.of(toBudget));
 
-
-        // WHEN
-        categoryService.transferFundsBetweenCategories(transferFunds);
-
-        // THEN
-        assertEquals(BigDecimal.valueOf(400.00), fromBudget.getAmount());
-        assertEquals(BigDecimal.valueOf(400.00), toBudget.getAmount());
-    }
-
-    @Test
-    void transferFunds_changeFundsBetweenCategories_insufficientFunds() {
-        //GIVEN
-        UserAccountEntity user = UserMockFactory.createUserEntity();
-        CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntity(user);
-        CategoryEntity toCategory = CategoryMockFactory.createCategoryEntity(user);
-        BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
-        BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
-        TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
-
-        fromBudget.setAmount(BigDecimal.valueOf(50.00));
-        toBudget.setAmount(BigDecimal.valueOf(300.00));
-        when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(transferFunds.userId(),
-                        TestConstants.FROM_CATEGORY_NAME))
-                .thenReturn(Optional.of(fromCategory));
-        when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(transferFunds.userId(),
-                        TestConstants.TO_CATEGORY_NAME))
-                .thenReturn(Optional.of(toCategory));
-        when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
-                        fromCategory.getCategoryId(), TestConstants.TRANSFER_FROM_BUDGET_ID))
-                .thenReturn(Optional.of(fromBudget));
-        when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
-                        toCategory.getCategoryId(), TestConstants.TRANSFER_TO_BUDGET_ID))
-                .thenReturn(Optional.of(toBudget));
-
-        //WHEN, THEN
-        BackendException exception = assertThrows(BackendException.class, () ->
-                categoryService
-                        .transferFundsBetweenCategories(transferFunds));
-        assertEquals(MessageConstants.INSUFFICIENT_FUNDS, exception.getMessage());
+        return new TransferFundsSetupHelper(user, fromCategory, toCategory, fromBudget, toBudget, transferFunds);
     }
 }
