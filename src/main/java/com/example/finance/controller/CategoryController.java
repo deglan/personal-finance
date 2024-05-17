@@ -4,6 +4,7 @@ import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.TransferFunds;
 import com.example.finance.service.CategoryService;
+import com.example.finance.utils.MessageConstants;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class CategoryController {
     @PostMapping(ApiEndpoints.Endpoints.TRANSFER)
     public ResponseEntity<String> transferFunds(@RequestBody @Valid TransferFunds request) {
         categoryService.transferFundsBetweenCategories(request);
-        return ResponseEntity.ok("Funds transfered successfully");
+        return ResponseEntity.ok(MessageConstants.FUNDS_TRANSFERRED_SUCCESSFULLY);
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)

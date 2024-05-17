@@ -12,5 +12,6 @@ public class MessageConstants {
     public String SOURCE_BUDGET = "Source budget not found";
     public String SOURCE_CATEGORY = "Source category not found";
     public String DESTINATION_CATEGORY = "Destination category not found";
+    public String FUNDS_TRANSFERRED_SUCCESSFULLY = "Funds transferred successfully";
 
 }
