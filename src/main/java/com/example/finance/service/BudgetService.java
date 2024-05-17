@@ -65,8 +65,7 @@ public class BudgetService {
     }
 
     public List<BudgetEntity> saveAll(List<BudgetEntity> list) {
-        List<BudgetEntity> savedBudgets = budgetRepository.saveAll(list);
-        return savedBudgets;
+        return budgetRepository.saveAll(list);
     }
 
     @Transactional
