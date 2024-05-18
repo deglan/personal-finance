@@ -40,6 +40,14 @@ public class BudgetService {
                 .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
     }
 
+    public BudgetEntity getByUserIdAndCategoryIdAndBudgetId(UUID userId, UUID categoryId, UUID budgetId) {
+        return budgetRepository
+                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(userId,
+                        categoryId,
+                        budgetId)
+                .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_BUDGET));
+    }
+
     @Transactional
     public BudgetDto create(BudgetDto budgetDto) {
         UserAccountEntity userAccountEntity = userAccountRepository.findById(budgetDto.userId())
@@ -56,6 +64,10 @@ public class BudgetService {
         return budgetMapper.toDto(savedEntity);
     }
 
+    public List<BudgetEntity> saveAll(List<BudgetEntity> list) {
+        return budgetRepository.saveAll(list);
+    }
+
     @Transactional
     public BudgetDto updateBudget(UUID id, BudgetDto budgetDto) {
         BudgetEntity budgetDb = budgetRepository.findById(id)
@@ -70,7 +82,7 @@ public class BudgetService {
     @Transactional
     public void deleteBudget(UUID id) {
         budgetRepository.findById(id)
-                        .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
+                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
     }
 }

@@ -2,19 +2,21 @@ package com.example.finance.service;
 
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.CategoryMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.CategoryDto;
+import com.example.finance.model.dto.TransferFunds;
+import com.example.finance.model.dto.UserAccountDto;
+import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.CategoriesRepository;
-import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +28,10 @@ public class CategoryService {
     private static final String MESSAGE = "There is no such category";
 
     private final CategoriesRepository categoriesRepository;
-    private final UserAccountRepository userAccountRepository;
+    private final UserAccountService userAccountService;
+    private final BudgetService budgetService;
     private final CategoryMapper categoryMapper;
-    private final EntityManager entityManager;
+    private final UserAccountMapper userAccountMapper;
 
     public List<CategoryDto> getAll() {
         return toDtoList(categoriesRepository.findAll());
@@ -44,10 +47,11 @@ public class CategoryService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
     }
 
+
     @Transactional
     public CategoryDto create(CategoryDto category) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findById(category.userId())
-                .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
+        UserAccountDto userAccountDto = userAccountService.getById(category.userId());
+        UserAccountEntity userAccountEntity = userAccountMapper.toEntity(userAccountDto);
         CategoryEntity categoryEntity = categoryMapper.toEntity(category);
         categoryEntity.setUserAccountEntity(userAccountEntity);
         CategoryEntity savedCategory = categoriesRepository.save(categoryEntity);
@@ -67,6 +71,37 @@ public class CategoryService {
         categoryDb.setDescription(category.description());
         CategoryEntity savedCategory = categoriesRepository.save(categoryDb);
         return categoryMapper.toDto(savedCategory);
+    }
+
+    public CategoryEntity getByUserIdAndCategoryName(UUID userId, String name) {
+        return categoriesRepository
+                .findByUserAccountEntityUserIdAndName(userId, name)
+                .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_CATEGORY));
+    }
+
+    @Transactional
+    public void transferFundsBetweenCategories(TransferFunds transferFunds) {
+        CategoryEntity fromCategory = getByUserIdAndCategoryName(transferFunds.userId(),
+                transferFunds.fromCategoryName());
+        CategoryEntity toCategory = getByUserIdAndCategoryName(transferFunds.userId(),
+                transferFunds.toCategoryName());
+        BudgetEntity fromBudget = budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+                fromCategory.getCategoryId(),
+                transferFunds.fromBudgetId());
+        BudgetEntity toBudget = budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+                toCategory.getCategoryId(),
+                transferFunds.toBudgetId());
+        BigDecimal transferFundsAmount = transferFunds.amount();
+        BigDecimal fromBudgetAmount = fromBudget.getAmount();
+        BigDecimal toBudgetAmount = toBudget.getAmount();
+        if (fromBudgetAmount.compareTo(transferFundsAmount) < 0) {
+            throw new BackendException(MessageConstants.INSUFFICIENT_FUNDS);
+        }
+        BigDecimal newFromBudget = fromBudgetAmount.subtract(transferFundsAmount);
+        BigDecimal newToBudget = toBudgetAmount.add(transferFundsAmount);
+        fromBudget.setAmount(newFromBudget);
+        toBudget.setAmount(newToBudget);
+        budgetService.saveAll(List.of(fromBudget, toBudget));
     }
 
     @Transactional

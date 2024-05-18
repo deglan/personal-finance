@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class ReportService {
                 .orElseThrow(() -> new BackendException("User not found"));
         ReportEntity reportEntity = reportMapper.toEntity(report);
         reportEntity.setUserAccountEntity(userAccountEntity);
+        reportEntity.setGeneratedDate(LocalDate.now());
         ReportEntity savedReport = reportRepository.save(reportEntity);
         log.info("Saved report with ID {} and type {} for user with ID {}",
                 reportEntity.getReportId(),
@@ -55,9 +57,9 @@ public class ReportService {
     public ReportDto updateReport(UUID id, ReportDto reportDto) {
         ReportEntity reportDb = reportRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        reportDb.setReportType(reportDb.getReportType());
-        reportRepository.save(reportDb);
-        return reportMapper.toDto(reportDb);
+        reportDb.setReportType(reportDto.reportType());
+        ReportEntity savedReport = reportRepository.save(reportDb);
+        return reportMapper.toDto(savedReport);
     }
 
     @Transactional
