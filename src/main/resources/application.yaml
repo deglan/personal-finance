@@ -3,9 +3,6 @@ app:
     src: jdbc:postgresql://localhost:5432/finance
     username: postgres
     password: clinic
-server:
-  servlet:
-    context-path: /api
 spring:
   datasource:
     url: ${app.db.src}

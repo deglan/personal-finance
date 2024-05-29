@@ -9,7 +9,6 @@ import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.TransactionsRepository;
 import com.example.finance.repository.UserAccountRepository;
-import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,6 @@ public class TransactionService {
     private final UserAccountRepository userAccountRepository;
     private final TransactionMapper transactionMapper;
     private final CategoriesRepository categoriesRepository;
-    private final EntityManager entityManager;
 
 
     public List<TransactionDto> getByUserId(UUID userId) {
@@ -53,9 +51,9 @@ public class TransactionService {
         transactionsEntity.setCategoryEntity(categoryEntity);
         TransactionsEntity savedTransaction = transactionsRepository.save(transactionsEntity);
         log.info("Saved transaction with ID {} and type {} for user with ID {}",
-                transactionsEntity.getTransactionID(),
-                transactionsEntity.getTransactionType(),
-                transactionsEntity.getUserAccountEntity().getUserId());
+                savedTransaction.getTransactionId(),
+                savedTransaction.getTransactionType(),
+                savedTransaction.getUserAccountEntity().getUserId());
         return transactionMapper.toDto(savedTransaction);
     }
 

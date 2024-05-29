@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(ApiEndpoints.Endpoints.CATEGORIES)
+@RequestMapping(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.CATEGORIES)
 @AllArgsConstructor
 public class CategoryController {
 

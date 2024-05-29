@@ -20,7 +20,7 @@ public class TransactionsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "TRANSACTION_ID")
-    private UUID transactionID;
+    private UUID transactionId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserAccountEntity userAccountEntity;
