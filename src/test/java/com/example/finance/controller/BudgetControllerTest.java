@@ -3,11 +3,8 @@ package com.example.finance.controller;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.configuration.TestMockConfiguration;
 import com.example.finance.factory.BudgetMockFactory;
-import com.example.finance.factory.TransactionMockFactory;
 import com.example.finance.helper.MockMvcHelper;
 import com.example.finance.model.dto.BudgetDto;
-import com.example.finance.model.dto.TransactionDto;
-import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.service.BudgetService;
 import com.example.finance.utils.TestConstants;
 import com.example.finance.utils.TestControllerUtil;
@@ -121,7 +118,7 @@ class BudgetControllerTest {
 
     @SneakyThrows
     @Test
-    void delete() {
+    void delete_deleteBudget_success() {
         String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_DELETE.getPath(), port);
         //WHEN
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete(url, TestConstants.BUDGET_UUID))

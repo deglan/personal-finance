@@ -51,7 +51,7 @@ public class ReportControllerTest {
 
     @SneakyThrows
     @Test
-    void getById() {
+    void budget_getById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.REPORT_GET_BY_ID.getPath(), port);
         //WHEN

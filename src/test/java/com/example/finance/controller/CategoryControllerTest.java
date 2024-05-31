@@ -51,7 +51,7 @@ public class CategoryControllerTest {
 
     @SneakyThrows
     @Test
-    void getById() {
+    void category_getById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.CATEGORIES_GET_BY_ID.getPath(), port);
         //WHEN

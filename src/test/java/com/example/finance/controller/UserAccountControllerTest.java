@@ -52,7 +52,7 @@ public class UserAccountControllerTest {
 
     @SneakyThrows
     @Test
-    void getById() {
+    void user_getById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.USER_GET_BY_ID.getPath(), port);
         //WHEN
@@ -63,16 +63,5 @@ public class UserAccountControllerTest {
         UserAccountDto userAccountDto = mockMvcHelper.mapResponse(UserAccountDto.class, mvcResult);
         //THEN
         Assertions.assertNotNull(userAccountDto);
-    }
-
-    @SneakyThrows
-    @Test
-    void postUser() {
-        //GIVEN
-        UserAccountDto userDto = UserMockFactory.createUserDto();
-        //WHEN
-
-        //THEN
-
     }
 }
