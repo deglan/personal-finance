@@ -55,7 +55,7 @@ public class TransactionControllerTest {
 
     @SneakyThrows
     @Test
-    void transaction_getTransactionById_success() {
+    void getById_getTransactionById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.TRANSACTIONS_GET_BY_ID.getPath(), port);
         //WHEN
@@ -69,7 +69,7 @@ public class TransactionControllerTest {
 
     @SneakyThrows
     @Test
-    void transaction_createTransaction_success() {
+    void create_createTransaction_success() {
         //GIVEN
         TransactionDto transactionDto = TransactionMockFactory.createTransactionDtoWithoutTransactionUUID();
         String url = TestControllerUtil.getUrl(ApiEndpoints.TRANSACTIONS_CREATE.getPath(), port);
@@ -87,7 +87,7 @@ public class TransactionControllerTest {
 
     @SneakyThrows
     @Test
-    void transaction_updateTransaction_success() {
+    void update_updateTransaction_success() {
         //GIVEN
         TransactionDto transactionDto = TransactionMockFactory.createTransactionDto(TestConstants.TRANSACTION_TEST_DESCRIPTION);
         String url = TestControllerUtil.getUrl(ApiEndpoints.TRANSACTIONS_UPDATE.getPath(), port);
@@ -106,7 +106,7 @@ public class TransactionControllerTest {
 
     @SneakyThrows
     @Test
-    void transaction_deleteTransaction_success() {
+    void delete_deleteTransaction_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.TRANSACTIONS_DELETE.getPath(), port);
         //WHEN

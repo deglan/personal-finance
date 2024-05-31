@@ -2,7 +2,6 @@ package com.example.finance.controller;
 
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.configuration.TestMockConfiguration;
-import com.example.finance.factory.UserMockFactory;
 import com.example.finance.helper.MockMvcHelper;
 import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.service.UserAccountService;
@@ -52,7 +51,7 @@ public class UserAccountControllerTest {
 
     @SneakyThrows
     @Test
-    void user_getById_success() {
+    void getById_getUserById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.USER_GET_BY_ID.getPath(), port);
         //WHEN

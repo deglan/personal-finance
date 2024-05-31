@@ -53,7 +53,7 @@ class BudgetControllerTest {
 
     @SneakyThrows
     @Test
-    void budget_getById_success() {
+    void getById_getBudgetById_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_GET_BY_ID.getPath(), port);
         //WHEN
@@ -67,7 +67,7 @@ class BudgetControllerTest {
 
     @SneakyThrows
     @Test
-    void budget_getBudgetsByUserId_success() {
+    void getByUserId_getBudgetsByUserId_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_GET_BY_ID.getPath(), port);
         //WHEN
@@ -81,7 +81,7 @@ class BudgetControllerTest {
 
     @SneakyThrows
     @Test
-    void budget_createBudget_success() {
+    void create_createBudget_success() {
         //GIVEN
         String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_CREATE.getPath(), port);
         BudgetDto budgetDto = BudgetMockFactory.createBudgetDtoWithoutUUID();
@@ -99,7 +99,7 @@ class BudgetControllerTest {
 
     @SneakyThrows
     @Test
-    void budget_updateBudget_success() {
+    void update_updateBudget_success() {
         //GIVEN
         BudgetDto budgetDto = BudgetMockFactory.createBudgetDto(TestConstants.BUDGET_TEST_MONTH);
         String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_UPDATE.getPath(), port);
