@@ -68,10 +68,4 @@ public class ReportService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
         reportRepository.delete(reportEntity);
     }
-
-    private List<ReportDto> toDtoList(List<ReportEntity> reportEntities) {
-        return reportEntities.stream()
-                .map(reportMapper::toDto)
-                .toList();
-    }
 }

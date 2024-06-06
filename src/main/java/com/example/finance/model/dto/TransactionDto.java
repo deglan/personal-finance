@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record TransactionDto(UUID transactionID,
+public record TransactionDto(UUID transactionId,
                              UUID userId,
                              UUID categoryId,
                              BigDecimal amount,

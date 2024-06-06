@@ -64,8 +64,8 @@ public class BudgetService {
         return budgetMapper.toDto(savedEntity);
     }
 
-    public List<BudgetEntity> saveAll(List<BudgetEntity> list) {
-        return budgetRepository.saveAll(list);
+    public void saveAll(List<BudgetEntity> list) {
+        budgetRepository.saveAll(list);
     }
 
     @Transactional

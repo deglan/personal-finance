@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(ApiEndpoints.Endpoints.USER)
+@RequestMapping(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.USER)
 @AllArgsConstructor
 public class UserAccountController {
 
