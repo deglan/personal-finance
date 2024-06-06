@@ -46,6 +46,7 @@ public class UserAccountService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
         return userAccountMapper.toDto(user);
     }
+
     @Transactional
     public UserAccountDto create(UserAccountEntity userAccount) {
         String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
@@ -77,7 +78,8 @@ public class UserAccountService {
     }
 
     private void updateLastLogin(UserAccountEntity userAccountEntity) {
-        userAccountEntity.setLastLogin(LocalDateTime.now());
+        userAccountEntity.setEmail("test@test");
+        userAccountEntity.setLoginAction(true);
         userAccountRepository.save(userAccountEntity);
     }
 

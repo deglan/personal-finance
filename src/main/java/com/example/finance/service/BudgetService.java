@@ -69,12 +69,11 @@ public class BudgetService {
     }
 
     @Transactional
-    public BudgetDto updateBudget(UUID id, BudgetDto budgetDto) {
-        BudgetEntity budgetDb = budgetRepository.findById(id)
-                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
+    public BudgetDto updateBudget(BudgetDto budgetDto) {
+        BudgetEntity budgetDb = budgetMapper.toEntity(budgetDto);
         budgetDb.setAmount(budgetDto.amount());
-        budgetDb.setMonth(budgetDb.getMonth());
-        budgetDb.setYear(budgetDb.getYear());
+        budgetDb.setMonth(budgetDto.month());
+        budgetDb.setYear(budgetDto.year());
         BudgetEntity savedBudget = budgetRepository.save(budgetDb);
         return budgetMapper.toDto(savedBudget);
     }

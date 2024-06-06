@@ -1,5 +1,6 @@
 package com.example.finance.model.entity;
 
+import com.example.finance.listener.BudgetEntityListener;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(value = BudgetEntityListener.class)
 @ToString(exclude = {"userAccountEntity"})
 public class BudgetEntity {
 

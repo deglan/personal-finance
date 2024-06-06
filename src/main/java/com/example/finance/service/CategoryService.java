@@ -64,8 +64,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryDto updateCategory(UUID id, CategoryDto category) {
-        CategoryEntity categoryDb = categoriesRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+        CategoryEntity categoryDb = categoryMapper.toEntity(category);
         categoryDb.setName(category.name());
         categoryDb.setTransactionType(category.transactionType());
         categoryDb.setDescription(category.description());

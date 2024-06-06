@@ -1,6 +1,7 @@
 package com.example.finance.model.entity;
 
 import com.example.finance.auth.RoleConverter;
+import com.example.finance.listener.UserAccountListener;
 import com.example.finance.model.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(value = UserAccountListener.class)
 @Table(name = "USER_ACCOUNT")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -55,4 +57,8 @@ public class UserAccountEntity {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Builder.Default
     private boolean active = true;
+    @Transient
+    private boolean isLoginAction;
+    @Transient
+    private String accountAge;
 }
