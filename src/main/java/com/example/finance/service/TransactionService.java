@@ -61,11 +61,10 @@ public class TransactionService {
 
     @Transactional
     public TransactionDto updateTransaction(UUID id, TransactionDto transaction) {
-        TransactionsEntity transactionDb = transactionsRepository.findById(id)
+        TransactionsEntity existingTransaction = transactionsRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        transactionDb.setAmount(transaction.amount());
-        transactionDb.setTransactionType(transaction.transactionType());
-        transactionDb.setDescription(transaction.description());
+        TransactionsEntity transactionDb = transactionMapper.toEntity(transaction);
+        transactionDb.setTransactionID(existingTransaction.getTransactionID());
         TransactionsEntity savedTransaction = transactionsRepository.save(transactionDb);
         return transactionMapper.toDto(savedTransaction);
     }
