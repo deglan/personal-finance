@@ -79,7 +79,6 @@ public class BudgetService {
         applicationEventPublisher.publishEvent(new BudgetUpdateEvent(this, savedBudget));
         return budgetMapper.toDto(savedBudget);
     }
-
     @Transactional
     public void deleteBudget(UUID id) {
         budgetRepository.findById(id)

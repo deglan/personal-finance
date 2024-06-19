@@ -32,4 +32,7 @@ public class BudgetEntity {
     private Integer month;
     @Column(name = "YEAR", nullable = false)
     private Integer year;
+    @Column(name = "BUSINESS_OBJECT_VERSION")
+    @Version
+    private int businessObjectVersion;
 }
