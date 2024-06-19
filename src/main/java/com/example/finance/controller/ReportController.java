@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(ApiEndpoints.Endpoints.REPORT)
+@RequestMapping(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.REPORT)
 @AllArgsConstructor
 public class ReportController {
 

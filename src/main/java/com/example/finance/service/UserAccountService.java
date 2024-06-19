@@ -48,7 +48,6 @@ public class UserAccountService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
         return userAccountMapper.toDto(user);
     }
-
     @Transactional
     public UserAccountDto create(UserAccountEntity userAccount) {
         String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
@@ -79,16 +78,9 @@ public class UserAccountService {
         return userAccountMapper.toDto(savedUserAccountEntity);
     }
 
-    private UserAccountEntity saveAndClearCacheById(UUID id, UserAccountEntity userAccountDb) {
-        UserAccountEntity savedUserAccountEntity = userAccountRepository.save(userAccountDb);
-        userServiceCacheManager.clearUserCacheById(id);
-        return savedUserAccountEntity;
-    }
-
-    private UserAccountEntity updateLastLogin(UserAccountEntity userAccountEntity) {
+    private void updateLastLogin(UserAccountEntity userAccountEntity) {
         userAccountEntity.setLastLogin(LocalDateTime.now());
         userAccountRepository.save(userAccountEntity);
-        return userAccountEntity;
     }
 
     private UserAccountEntity setDeleteUser(UserAccountEntity userAccountEntity) {

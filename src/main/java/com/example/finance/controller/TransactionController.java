@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(ApiEndpoints.Endpoints.TRANSACTION)
+@RequestMapping(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.TRANSACTION)
 @AllArgsConstructor
 public class TransactionController {
 

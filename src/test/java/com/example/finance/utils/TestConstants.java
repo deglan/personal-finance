@@ -22,6 +22,7 @@ public class TestConstants {
     public final UUID BUDGET_UUID = UUID.fromString("123e4567-e89b-12d3-a456-426614174002");
     public final BigDecimal BUDGET_AMOUNT = BigDecimal.valueOf(1000.00);
     public final int BUDGET_MONTH = 9;
+    public final int BUDGET_TEST_MONTH = 11;
     public final int BUDGET_YEAR = 2023;
 
     public final UUID TRANSACTION_UUID = UUID.fromString("123e4567-e89b-12d3-a456-426614174003");
@@ -29,6 +30,7 @@ public class TestConstants {
     public final TransactionType TRANSACTION_TYPE = TransactionType.EXPENSE;
     public final LocalDate TRANSACTION_DATE = LocalDate.now();
     public final String TRANSACTION_DESCRIPTION = "Sample transaction";
+    public final String TRANSACTION_TEST_DESCRIPTION = "test";
 
     public final UUID REPORT_UUID = UUID.fromString("123e4567-e89b-12d3-a456-426614174004");
     public final String REPORT_TYPE = "Monthly Expense Report";

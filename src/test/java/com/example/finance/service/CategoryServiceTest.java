@@ -6,6 +6,7 @@ import com.example.finance.factory.CategoryMockFactory;
 import com.example.finance.factory.TransferFundsMockFactory;
 import com.example.finance.factory.UserMockFactory;
 import com.example.finance.mapper.CategoryMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.TransferFunds;
 import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
@@ -36,16 +37,18 @@ class CategoryServiceTest {
     @Mock
     CategoriesRepository categoriesRepository;
     @Mock
-    UserAccountRepository userAccountRepository;
+    UserAccountService userAccountService;
     @Mock
-    BudgetRepository budgetRepository;
+    BudgetService budgetService;
     @Mock
     CategoryMapper categoryMapper;
+    @Mock
+    UserAccountMapper userAccountMapper;
     CategoryService categoryService;
 
     @BeforeEach
     public void setUp() {
-        categoryService = new CategoryService(categoriesRepository, userAccountRepository, budgetRepository, categoryMapper);
+        categoryService = new CategoryService(categoriesRepository, userAccountService, budgetService, categoryMapper, userAccountMapper);
     }
 
     @Test
@@ -79,8 +82,8 @@ class CategoryServiceTest {
 
     private TransferFundsSetupHelper setupTransferFunds(BigDecimal fromBudgetAmount, BigDecimal toBudgetAmount) {
         UserAccountEntity user = UserMockFactory.createUserEntity();
-        CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntity(user);
-        CategoryEntity toCategory = CategoryMockFactory.createCategoryEntity(user);
+        CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
+        CategoryEntity toCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
         BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
         BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
         TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
@@ -94,14 +97,12 @@ class CategoryServiceTest {
         when(categoriesRepository
                 .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.toCategoryName()))
                 .thenReturn(Optional.of(toCategory));
-        when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
-                        fromCategory.getCategoryId(), transferFunds.fromBudgetId()))
-                .thenReturn(Optional.of(fromBudget));
-        when(budgetRepository
-                .findByUserAccountEntityUserIdAndCategoryEntityCategoryIdAndBudgetId(transferFunds.userId(),
-                        toCategory.getCategoryId(), transferFunds.toBudgetId()))
-                .thenReturn(Optional.of(toBudget));
+        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+                fromCategory.getCategoryId(), transferFunds.fromBudgetId()))
+                .thenReturn(fromBudget);
+        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+                toCategory.getCategoryId(), transferFunds.toBudgetId()))
+                .thenReturn(toBudget);
 
         return new TransferFundsSetupHelper(user, fromCategory, toCategory, fromBudget, toBudget, transferFunds);
     }

@@ -9,10 +9,21 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ReportMockFactory {
 
-    public ReportEntity createReportEntity(UserAccountEntity user) {
+    public ReportEntity createReportEntityWithUser(UserAccountEntity user) {
         return ReportEntity.builder()
                 .reportId(TestConstants.REPORT_UUID)
                 .userAccountEntity(user)
+                .reportType(TestConstants.REPORT_TYPE)
+                .startDate(TestConstants.REPORT_START_DATE)
+                .endDate(TestConstants.REPORT_END_DATE)
+                .generatedDate(TestConstants.REPORT_GENERATED_DATE)
+                .build();
+    }
+
+    public ReportEntity createReportEntity() {
+        return ReportEntity.builder()
+                .reportId(TestConstants.REPORT_UUID)
+                .userAccountEntity(UserMockFactory.createUserEntity())
                 .reportType(TestConstants.REPORT_TYPE)
                 .startDate(TestConstants.REPORT_START_DATE)
                 .endDate(TestConstants.REPORT_END_DATE)
