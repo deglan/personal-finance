@@ -63,11 +63,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDto updateCategory(UUID id, CategoryDto category) {
-        CategoryEntity existingCategory = categoriesRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+    public CategoryDto updateCategory(CategoryDto category) {
         CategoryEntity categoryDb = categoryMapper.toEntity(category);
-        categoryDb.setCategoryId(existingCategory.getCategoryId());
         CategoryEntity savedCategory = categoriesRepository.save(categoryDb);
         return categoryMapper.toDto(savedCategory);
     }

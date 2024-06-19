@@ -54,11 +54,8 @@ public class ReportService {
     }
 
     @Transactional
-    public ReportDto updateReport(UUID id, ReportDto reportDto) {
-        ReportEntity existingReport = reportRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+    public ReportDto updateReport(ReportDto reportDto) {
         ReportEntity reportDb = reportMapper.toEntity(reportDto);
-        reportDb.setReportId(existingReport.getReportId());
         ReportEntity savedReport = reportRepository.save(reportDb);
         return reportMapper.toDto(savedReport);
     }

@@ -1,5 +1,6 @@
 package com.example.finance.service;
 
+import com.example.finance.event.BudgetUpdateEvent;
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.BudgetMapper;
 import com.example.finance.model.dto.BudgetDto;
@@ -12,6 +13,8 @@ import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ public class BudgetService {
     private final CategoriesRepository categoriesRepository;
     private final UserAccountRepository userAccountRepository;
     private final BudgetMapper budgetMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public List<BudgetDto> getByUserId(UUID userId) {
         return budgetMapper.toDtoList(budgetRepository.findByUserAccountEntityUserId(userId));
@@ -69,12 +73,10 @@ public class BudgetService {
     }
 
     @Transactional
-    public BudgetDto updateBudget(UUID id, BudgetDto budgetDto) {
-        BudgetEntity existingBudget  = budgetRepository.findById(id)
-                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
+    public BudgetDto updateBudget(BudgetDto budgetDto) {
         BudgetEntity budgetDb = budgetMapper.toEntity(budgetDto);
-        budgetDb.setBudgetId(existingBudget.getBudgetId());
-        BudgetEntity savedBudget = budgetRepository.save(budgetDb);
+        BudgetEntity savedBudget = budgetRepository.saveAndFlush(budgetDb);
+        applicationEventPublisher.publishEvent(new BudgetUpdateEvent(this, savedBudget));
         return budgetMapper.toDto(savedBudget);
     }
 

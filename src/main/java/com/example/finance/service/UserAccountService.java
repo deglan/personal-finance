@@ -58,6 +58,7 @@ public class UserAccountService {
         log.info(String.format("Saved user with ID %s and login %s", userDb.getUserId(), userDb.getLogin()));
         return userAccountMapper.toDto(userDb);
     }
+
     @Transactional
     public UserAccountDto updateUser(UUID id, UserAccountEntity userAccountEntity) {
         UserAccountEntity userAccountDb = userAccountRepository.findById(id)

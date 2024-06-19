@@ -39,7 +39,7 @@ public class ReportController {
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
     public ResponseEntity<ReportDto> update(@PathVariable UUID id, @RequestBody ReportDto report) {
-        ReportDto reportDto = reportService.updateReport(id, report);
+        ReportDto reportDto = reportService.updateReport(report);
         return ResponseEntity.ok(reportDto);
     }
 
