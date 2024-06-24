@@ -64,9 +64,11 @@ public class CategoryService {
 
     @Transactional
     public CategoryDto updateCategory(CategoryDto category) {
-        categoriesRepository.findByIdWithLock(category.categoryId())
+        CategoryEntity categoryEntity = categoriesRepository.findByIdWithLock(category.categoryId())
                 .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
         CategoryEntity categoryDb = categoryMapper.toEntity(category);
+        categoryDb.setBudgetEntities(categoryEntity.getBudgetEntities());
+        categoryDb.setTransactionsEntities(categoryEntity.getTransactionsEntities());
         CategoryEntity savedCategory = categoriesRepository.save(categoryDb);
         return categoryMapper.toDto(savedCategory);
     }

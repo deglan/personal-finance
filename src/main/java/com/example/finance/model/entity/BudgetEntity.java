@@ -33,6 +33,6 @@ public class BudgetEntity {
     @Column(name = "YEAR", nullable = false)
     private Integer year;
     @Column(name = "BUSINESS_OBJECT_VERSION")
-    @Version
+//    @Version
     private int businessObjectVersion;
 }
