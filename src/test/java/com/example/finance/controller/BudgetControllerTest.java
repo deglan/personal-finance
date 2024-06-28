@@ -28,6 +28,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.annotation.PostConstruct;
 
+import static org.mockito.Mockito.when;
+
 @ActiveProfiles(value = "unit-test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -102,7 +104,9 @@ class BudgetControllerTest {
     void update_updateBudget_success() {
         //GIVEN
         BudgetDto budgetDto = BudgetMockFactory.createBudgetDto(TestConstants.BUDGET_TEST_MONTH);
-        String url = TestControllerUtil.getUrl(ApiEndpoints.BUDGETS_UPDATE.getPath(), port);
+        String url = TestControllerUtil.getUrl(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.BUDGET + "/" + budgetDto.budgetId(), port);
+        System.out.println("URL: " + url);
+
         //WHEN
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(url, TestConstants.BUDGET_UUID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,6 +114,8 @@ class BudgetControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
         BudgetDto savedBudgetDto = mockMvcHelper.mapResponse(BudgetDto.class, mvcResult);
+        System.out.println("Response: " + mvcResult.getResponse().getContentAsString());
+
         //THEN
         Assertions.assertNotNull(savedBudgetDto);
         Assertions.assertNotNull(savedBudgetDto.budgetId());

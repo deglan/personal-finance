@@ -25,8 +25,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CategoryService {
 
-    private static final String MESSAGE = "There is no such category";
-
     private final CategoriesRepository categoriesRepository;
     private final UserAccountService userAccountService;
     private final BudgetService budgetService;
@@ -34,19 +32,18 @@ public class CategoryService {
     private final UserAccountMapper userAccountMapper;
 
     public List<CategoryDto> getAll() {
-        return toDtoList(categoriesRepository.findAll());
+        return categoryMapper.toDtoList(categoriesRepository.findAll());
     }
 
     public List<CategoryDto> getByUserId(UUID userId) {
-        return toDtoList(categoriesRepository.findByUserAccountEntityUserId(userId));
+        return categoryMapper.toDtoList(categoriesRepository.findByUserAccountEntityUserId(userId));
     }
 
     public CategoryDto getById(UUID id) {
         return categoriesRepository.findById(id)
                 .map(categoryMapper::toDto)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+                .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
     }
-
 
     @Transactional
     public CategoryDto create(CategoryDto category) {
@@ -107,13 +104,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(UUID id) {
         CategoryEntity categoryEntity = categoriesRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+                .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
         categoriesRepository.delete(categoryEntity);
-    }
-
-    private List<CategoryDto> toDtoList(List<CategoryEntity> categoryEntities) {
-        return categoryEntities.stream()
-                .map(categoryMapper::toDto)
-                .toList();
     }
 }
