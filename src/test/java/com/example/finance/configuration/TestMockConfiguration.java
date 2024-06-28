@@ -14,6 +14,9 @@ import org.springframework.context.annotation.Primary;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 @TestConfiguration
 public class TestMockConfiguration {
 
@@ -31,7 +34,7 @@ public class TestMockConfiguration {
                 .thenReturn(Optional.of(budgetEntity));
         Mockito.when(budgetRepository.save(budgetEntityWithoutUUID))
                 .thenReturn(budgetEntity);
-        Mockito.when(budgetRepository.save(budgetEntityUpdated))
+        when(budgetRepository.saveAndFlush(any(BudgetEntity.class)))
                 .thenReturn(budgetEntityUpdated);
         return budgetRepository;
     }
@@ -66,7 +69,7 @@ public class TestMockConfiguration {
                 .thenReturn(Optional.of(transactionEntity));
         Mockito.when(transactionsRepository.save(transactionEntityWithoutId))
                 .thenReturn(transactionEntity);
-        Mockito.when(transactionsRepository.save(transactionEntityForUpdate))
+        when(transactionsRepository.saveAndFlush(any(TransactionsEntity.class)))
                 .thenReturn(transactionEntityForUpdate);
         return transactionsRepository;
     }

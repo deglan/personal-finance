@@ -39,7 +39,7 @@ public class BudgetController {
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
     public ResponseEntity<BudgetDto> update(@PathVariable UUID id, @RequestBody BudgetDto budget) {
-        BudgetDto budgetDto = budgetService.updateBudget(id, budget);
+        BudgetDto budgetDto = budgetService.updateBudget(budget);
         return ResponseEntity.ok(budgetDto);
     }
 

@@ -5,6 +5,7 @@ import com.example.finance.exception.model.BackendException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -35,5 +36,17 @@ public class ExceptionController {
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(authorizationException);
+    }
+
+    @ExceptionHandler(value = {ObjectOptimisticLockingFailureException.class})
+    public ResponseEntity<ProjectError> handleOptimisticLockingFailure(ObjectOptimisticLockingFailureException ex) {
+        ProjectError lockingFailureException = ProjectError.builder()
+                .errorName("lockingFailureException")
+                .message("Resource is locked. Please try again later.")
+                .timestamp(LocalDateTime.now())
+                .build();
+        log.error(ex.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.LOCKED)
+                .body(lockingFailureException);
     }
 }

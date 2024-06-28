@@ -7,7 +7,7 @@ import com.example.finance.model.enums.TransactionType;
 import com.example.finance.utils.TestConstants;
 import lombok.experimental.UtilityClass;
 
-import java.util.Collections;
+import java.util.*;
 
 @UtilityClass
 public class CategoryMockFactory {
@@ -36,6 +36,10 @@ public class CategoryMockFactory {
                 .build();
     }
 
+    public List<CategoryEntity> createCategoryEntities() {
+        return List.of(createCategoryEntity());
+    }
+
     public CategoryDto createCategoryDto() {
         return new CategoryDto(
                 TestConstants.CATEGORY_UUID,
@@ -54,5 +58,9 @@ public class CategoryMockFactory {
                 TransactionType.EXPENSE,
                 TestConstants.CATEGORY_DESCRIPTION
         );
+    }
+
+    public List<CategoryDto> createCategoryDtos() {
+        return List.of(createCategoryDto());
     }
 }

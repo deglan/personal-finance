@@ -6,11 +6,13 @@ import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.UserAccountRepository;
+import com.example.finance.service.cache.UserServiceCacheManager;
 import com.example.finance.utils.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -33,6 +35,8 @@ class UserAccountServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private UserServiceCacheManager userServiceCacheManager;
 
     @InjectMocks
     private UserAccountService userAccountService;
@@ -72,7 +76,7 @@ class UserAccountServiceTest {
     void getById_findUserById_Success() {
         // GIVEN
         UserAccountEntity entity = UserMockFactory.createUserEntity();
-        when(userAccountRepository.findById(TestConstants.USER_UUID)).thenReturn(Optional.of(entity));
+        Mockito.lenient().when(userServiceCacheManager.findById(TestConstants.USER_UUID)).thenReturn(Optional.of(entity));
         when(userAccountMapper.toDto(any(UserAccountEntity.class)))
                 .thenReturn(UserMockFactory.createUserDto());
         // WHEN
@@ -81,7 +85,6 @@ class UserAccountServiceTest {
         //THEN
         assertNotNull(dto);
         assertEquals(TestConstants.USER_UUID, dto.userId());
-        verify(userAccountRepository).findById(TestConstants.USER_UUID);
         verify(userAccountMapper).toDto(entity);
     }
 

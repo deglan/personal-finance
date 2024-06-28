@@ -90,7 +90,7 @@ public class TransactionControllerTest {
     void update_updateTransaction_success() {
         //GIVEN
         TransactionDto transactionDto = TransactionMockFactory.createTransactionDto(TestConstants.TRANSACTION_TEST_DESCRIPTION);
-        String url = TestControllerUtil.getUrl(ApiEndpoints.TRANSACTIONS_UPDATE.getPath(), port);
+        String url = TestControllerUtil.getUrl(ApiEndpoints.Endpoints.API + ApiEndpoints.Endpoints.TRANSACTION + "/" + transactionDto.transactionId(), port);
         //WHEN
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(url, TestConstants.TRANSACTION_UUID)
                         .contentType(MediaType.APPLICATION_JSON)

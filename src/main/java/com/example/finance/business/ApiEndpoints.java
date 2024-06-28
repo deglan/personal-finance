@@ -50,7 +50,8 @@ public enum ApiEndpoints {
     REPORT_UPDATE(API + REPORT + ID, false, null),
     REPORT_DELETE(API + REPORT + ID, false, null),
 
-    ERROR_API("/api/error", false, null);
+    ERROR_API("/api/error", false, null),
+    ERROR("/error", false, null);
 
     private final String path;
     private final boolean authorization;

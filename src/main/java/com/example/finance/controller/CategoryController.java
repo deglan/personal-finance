@@ -54,7 +54,7 @@ public class CategoryController {
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
     public ResponseEntity<CategoryDto> update(@PathVariable UUID id, @RequestBody CategoryDto category) {
-        CategoryDto categoryDto = categoryService.updateCategory(id, category);
+        CategoryDto categoryDto = categoryService.updateCategory( category);
         return ResponseEntity.ok(categoryDto);
     }
 

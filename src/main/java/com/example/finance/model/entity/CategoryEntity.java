@@ -30,7 +30,7 @@ public class CategoryEntity {
     private UserAccountEntity userAccountEntity;
     @OneToMany(mappedBy = "categoryEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionsEntity> transactionsEntities;
-    @OneToMany(mappedBy = "categoryEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "categoryEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BudgetEntity> budgetEntities;
     @Column(name = "DESCRIPTION")
     private String description;
