@@ -61,6 +61,18 @@ public class TransactionMockFactory {
                 .build();
     }
 
+    public TransactionDto createTransactionDtoFullData() {
+        return new TransactionDto(
+                TestConstants.TRANSACTION_UUID,
+                TestConstants.USER_UUID,
+                TestConstants.CATEGORY_UUID,
+                TestConstants.TRANSACTION_AMOUNT,
+                TestConstants.TRANSACTION_TYPE,
+                TestConstants.TRANSACTION_DATE,
+                TestConstants.TRANSACTION_DESCRIPTION
+        );
+    }
+
     public TransactionDto createTransactionDto(UUID uuid) {
         return new TransactionDto(
                 uuid,

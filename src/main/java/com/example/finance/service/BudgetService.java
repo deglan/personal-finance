@@ -26,8 +26,6 @@ import java.util.UUID;
 @Slf4j
 public class BudgetService {
 
-    private final String BUDGET_NOT_FOUND_EXCEPTION_MESSAGE = "No budget found for id: ";
-
     private final BudgetRepository budgetRepository;
     private final CategoriesRepository categoriesRepository;
     private final UserAccountRepository userAccountRepository;
@@ -41,7 +39,7 @@ public class BudgetService {
     public BudgetDto getById(UUID id) {
         return budgetRepository.findById(id)
                 .map(budgetMapper::toDto)
-                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
+                .orElseThrow(() -> new BackendException(MessageConstants.BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
     }
 
     public BudgetEntity getByUserIdAndCategoryIdAndBudgetId(UUID userId, UUID categoryId, UUID budgetId) {
@@ -83,7 +81,7 @@ public class BudgetService {
     @Transactional
     public void deleteBudget(UUID id) {
         budgetRepository.findById(id)
-                .orElseThrow(() -> new BackendException(BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
+                .orElseThrow(() -> new BackendException(MessageConstants.BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
     }
 }
