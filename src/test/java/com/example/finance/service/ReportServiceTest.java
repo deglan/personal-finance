@@ -4,11 +4,12 @@ import com.example.finance.exception.model.BackendException;
 import com.example.finance.factory.ReportMockFactory;
 import com.example.finance.factory.UserMockFactory;
 import com.example.finance.mapper.ReportMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.ReportDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.ReportEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.ReportRepository;
-import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +33,9 @@ class ReportServiceTest {
     private ReportRepository reportRepository;
 
     @Mock
-    private UserAccountRepository userAccountRepository;
+    private UserAccountService userAccountService;
+    @Mock
+    private UserAccountMapper userAccountMapper;
 
     @Mock
     private ReportMapper reportMapper;
@@ -46,12 +46,14 @@ class ReportServiceTest {
     private ReportDto reportDto;
     private ReportEntity reportEntity;
     private UserAccountEntity userAccountEntity;
+    private UserAccountDto userDto;
 
     @BeforeEach
     void setUp() {
         reportDto = ReportMockFactory.createReportDto();
         reportEntity = ReportMockFactory.createReportEntity();
         userAccountEntity = UserMockFactory.createUserEntity();
+        userDto = UserMockFactory.createUserDto();
     }
 
     @Test
@@ -97,7 +99,8 @@ class ReportServiceTest {
     @Test
     void shouldCreateReport() {
         // Given
-        when(userAccountRepository.findById(reportDto.userId())).thenReturn(Optional.of(userAccountEntity));
+        when(userAccountService.getById(reportDto.userId())).thenReturn(userDto);
+        when(userAccountMapper.toEntity(userDto)).thenReturn(userAccountEntity);
         when(reportMapper.toEntity(reportDto)).thenReturn(reportEntity);
         when(reportRepository.save(reportEntity)).thenReturn(reportEntity);
         when(reportMapper.toDto(reportEntity)).thenReturn(reportDto);
@@ -108,17 +111,6 @@ class ReportServiceTest {
         // Then
         assertThat(result).isEqualTo(reportDto);
         verify(reportRepository).save(reportEntity);
-    }
-
-    @Test
-    void shouldThrowBackendExceptionWhenUserNotFoundForCreate() {
-        // Given
-        when(userAccountRepository.findById(reportDto.userId())).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> reportService.create(reportDto))
-                .isInstanceOf(BackendException.class)
-                .hasMessageContaining("User not found");
     }
 
     @Test

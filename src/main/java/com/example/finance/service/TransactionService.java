@@ -1,14 +1,16 @@
 package com.example.finance.service;
 
 import com.example.finance.exception.model.BackendException;
+import com.example.finance.mapper.CategoryMapper;
 import com.example.finance.mapper.TransactionMapper;
+import com.example.finance.mapper.UserAccountMapper;
+import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.TransactionDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.TransactionsEntity;
 import com.example.finance.model.entity.UserAccountEntity;
-import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.TransactionsRepository;
-import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +26,11 @@ import java.util.UUID;
 public class TransactionService {
 
     private final TransactionsRepository transactionsRepository;
-    private final UserAccountRepository userAccountRepository;
+    private final UserAccountService userAccountService;
+    private final UserAccountMapper userAccountMapper;
     private final TransactionMapper transactionMapper;
-    private final CategoriesRepository categoriesRepository;
+    private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
 
 
     public List<TransactionDto> getByUserId(UUID userId) {
@@ -41,10 +45,10 @@ public class TransactionService {
 
     @Transactional
     public TransactionDto create(TransactionDto transaction) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findById(transaction.userId())
-                .orElseThrow(() -> new BackendException("User not found"));
-        CategoryEntity categoryEntity = categoriesRepository.findById(transaction.categoryId())
-                .orElseThrow(() -> new BackendException("Category not found"));
+        UserAccountDto userAccountDto = userAccountService.getById(transaction.userId());
+        UserAccountEntity userAccountEntity = userAccountMapper.toEntity(userAccountDto);
+        CategoryDto categoryDto = categoryService.getById(transaction.categoryId());
+        CategoryEntity categoryEntity = categoryMapper.toEntity(categoryDto);
         TransactionsEntity transactionsEntity = transactionMapper.toEntity(transaction);
         transactionsEntity.setUserAccountEntity(userAccountEntity);
         transactionsEntity.setCategoryEntity(categoryEntity);
