@@ -25,7 +25,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class BudgetService {
-
+//TODO zmienic na service
     private final BudgetRepository budgetRepository;
     private final CategoriesRepository categoriesRepository;
     private final UserAccountRepository userAccountRepository;
@@ -83,5 +83,10 @@ public class BudgetService {
         budgetRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MessageConstants.BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
+    }
+
+    //Used in aspect programming
+    public boolean existById(UUID id) {
+        return budgetRepository.existsById(id);
     }
 }

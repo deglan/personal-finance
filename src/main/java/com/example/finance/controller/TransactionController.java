@@ -1,7 +1,10 @@
 package com.example.finance.controller;
 
+import com.example.finance.aop.annotation.CheckUuid;
+import com.example.finance.aop.annotation.ItemWithIdMustExist;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.TransactionDto;
+import com.example.finance.service.ReportService;
 import com.example.finance.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +41,8 @@ public class TransactionController {
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
+    @CheckUuid(primaryKey = "transactionId")
+    @ItemWithIdMustExist(serviceClass = TransactionService.class, checkExistByIdMethodName = "existById")
     public ResponseEntity<TransactionDto> update(@PathVariable UUID id, @RequestBody TransactionDto transaction) {
         TransactionDto transactionDto = transactionService.updateTransaction(transaction);
         return ResponseEntity.ok(transactionDto);

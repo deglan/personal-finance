@@ -18,6 +18,7 @@ public record BudgetDto(
         @Min(1)
         @Max(12)
         Integer month,
-        Integer year
+        Integer year,
+        int businessObjectVersion
 ) {
 }

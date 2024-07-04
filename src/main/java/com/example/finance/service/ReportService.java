@@ -66,4 +66,9 @@ public class ReportService {
                 .orElseThrow(() -> new BackendException(MESSAGE));
         reportRepository.delete(reportEntity);
     }
+
+    // AOP
+    public boolean existById(UUID id) {
+        return reportRepository.existsById(id);
+    }
 }

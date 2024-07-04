@@ -69,4 +69,9 @@ public class TransactionService {
                 .orElseThrow(() -> new BackendException(MessageConstants.TRANSACTION_NOT_FOUND));
         transactionsRepository.delete(transactionsEntity);
     }
+
+    // AOP
+    public boolean existById(UUID id) {
+        return transactionsRepository.existsById(id);
+    }
 }

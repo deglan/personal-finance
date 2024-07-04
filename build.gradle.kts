@@ -37,13 +37,15 @@ dependencies {
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 	implementation("com.auth0:java-jwt:4.4.0")
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+	implementation("org.aspectj:aspectjweaver")
 
 	compileOnly("org.projectlombok:lombok")
 
 	implementation("org.postgresql:postgresql")
 
 	annotationProcessor("org.projectlombok:lombok")
-	annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
 	testCompileOnly("org.projectlombok:lombok")
 
