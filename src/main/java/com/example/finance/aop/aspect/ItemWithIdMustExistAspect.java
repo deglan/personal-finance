@@ -45,28 +45,4 @@ public class ItemWithIdMustExistAspect {
             throw new BackendException("Item does not exist");
         }
     }
-//
-//    @After("mustExistAnnotation()")
-//    public void afterMethod() {
-//
-//    }
-//
-//    @AfterReturning("mustExistAnnotation()")
-//    public void afterReturningMethod() {
-//
-//    }
-//
-//    @AfterThrowing("mustExistAnnotation()")
-//    public void afterThrowingMethod() {
-//
-//    }
-//
-//    @SneakyThrows
-//    @Around("mustExistAnnotation()")
-//    public Object aroundMethod(ProceedingJoinPoint proceedingJoinPoint) {
-//        // Logika przed wywołaniem metody
-//        Object proceed = proceedingJoinPoint.proceed();
-//        // after method logic
-//        return proceed;
-//    }
 }
