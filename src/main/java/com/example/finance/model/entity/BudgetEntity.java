@@ -2,7 +2,6 @@ package com.example.finance.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -32,4 +31,7 @@ public class BudgetEntity {
     private Integer month;
     @Column(name = "YEAR", nullable = false)
     private Integer year;
+    @Column(name = "BUSINESS_OBJECT_VERSION")
+    @Version
+    private int businessObjectVersion;
 }

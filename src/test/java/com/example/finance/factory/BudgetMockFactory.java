@@ -7,6 +7,8 @@ import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.utils.TestConstants;
 import lombok.experimental.UtilityClass;
 
+import java.util.*;
+
 @UtilityClass
 public class BudgetMockFactory {
 
@@ -58,6 +60,10 @@ public class BudgetMockFactory {
                 .build();
     }
 
+    public List<BudgetEntity> createBudgetEntities() {
+        return List.of(createBudgetEntity());
+    }
+
     public BudgetDto createBudgetDto() {
         return new BudgetDto(
                 TestConstants.BUDGET_UUID,
@@ -89,5 +95,9 @@ public class BudgetMockFactory {
                 TestConstants.BUDGET_MONTH,
                 TestConstants.BUDGET_YEAR
         );
+    }
+
+    public List<BudgetDto> createBudgetDtos() {
+        return List.of(createBudgetDto());
     }
 }

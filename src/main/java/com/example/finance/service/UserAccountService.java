@@ -6,6 +6,7 @@ import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.UserAccountRepository;
+import com.example.finance.service.cache.UserServiceCacheManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final UserAccountMapper userAccountMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserServiceCacheManager userServiceCacheManager;
 
     public UserAccountDto getByLoginAndPassword(String login, String password) {
         UserAccountEntity userAccountEntity = userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(login)
@@ -42,7 +44,7 @@ public class UserAccountService {
     }
 
     public UserAccountDto getById(UUID id) {
-        UserAccountEntity user = userAccountRepository.findById(id)
+        UserAccountEntity user = userServiceCacheManager.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
         return userAccountMapper.toDto(user);
     }
@@ -64,7 +66,7 @@ public class UserAccountService {
         userAccountDb.setPassword(encodedPassword);
         userAccountDb.setLogin(userAccountEntity.getLogin());
         userAccountDb.setEmail(userAccountEntity.getEmail());
-        UserAccountEntity savedUserAccountEntity = userAccountRepository.save(userAccountDb);
+        UserAccountEntity savedUserAccountEntity = saveAndClearCacheById(id, userAccountDb);
         return userAccountMapper.toDto(savedUserAccountEntity);
     }
 
@@ -76,9 +78,16 @@ public class UserAccountService {
         return userAccountMapper.toDto(savedUserAccountEntity);
     }
 
-    private void updateLastLogin(UserAccountEntity userAccountEntity) {
+    private UserAccountEntity saveAndClearCacheById(UUID id, UserAccountEntity userAccountDb) {
+        UserAccountEntity savedUserAccountEntity = userAccountRepository.save(userAccountDb);
+        userServiceCacheManager.clearUserCacheById(id);
+        return savedUserAccountEntity;
+    }
+
+    private UserAccountEntity updateLastLogin(UserAccountEntity userAccountEntity) {
         userAccountEntity.setLastLogin(LocalDateTime.now());
         userAccountRepository.save(userAccountEntity);
+        return userAccountEntity;
     }
 
     private UserAccountEntity setDeleteUser(UserAccountEntity userAccountEntity) {

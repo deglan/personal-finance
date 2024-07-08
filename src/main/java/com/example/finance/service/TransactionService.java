@@ -9,6 +9,7 @@ import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.TransactionsRepository;
 import com.example.finance.repository.UserAccountRepository;
+import com.example.finance.utils.MessageConstants;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,6 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class TransactionService {
-
-    private static final String MESSAGE = "There is no such category";
 
     private final TransactionsRepository transactionsRepository;
     private final UserAccountRepository userAccountRepository;
@@ -37,7 +36,7 @@ public class TransactionService {
     public TransactionDto getById(UUID id) {
         return transactionsRepository.findById(id)
                 .map(transactionMapper::toDto)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+                .orElseThrow(() -> new BackendException(MessageConstants.TRANSACTION_NOT_FOUND));
     }
 
     @Transactional
@@ -58,20 +57,16 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionDto updateTransaction(UUID id, TransactionDto transaction) {
-        TransactionsEntity transactionDb = transactionsRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
-        transactionDb.setAmount(transaction.amount());
-        transactionDb.setTransactionType(transaction.transactionType());
-        transactionDb.setDescription(transaction.description());
-        TransactionsEntity savedTransaction = transactionsRepository.save(transactionDb);
+    public TransactionDto updateTransaction(TransactionDto transaction) {
+        TransactionsEntity transactionDb = transactionMapper.toEntity(transaction);
+        TransactionsEntity savedTransaction = transactionsRepository.saveAndFlush(transactionDb);
         return transactionMapper.toDto(savedTransaction);
     }
 
     @Transactional
     public void deleteTransaction(UUID id) {
         TransactionsEntity transactionsEntity = transactionsRepository.findById(id)
-                .orElseThrow(() -> new BackendException(MESSAGE));
+                .orElseThrow(() -> new BackendException(MessageConstants.TRANSACTION_NOT_FOUND));
         transactionsRepository.delete(transactionsEntity);
     }
 }

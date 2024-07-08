@@ -39,7 +39,7 @@ public class TransactionController {
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
     public ResponseEntity<TransactionDto> update(@PathVariable UUID id, @RequestBody TransactionDto transaction) {
-        TransactionDto transactionDto = transactionService.updateTransaction(id, transaction);
+        TransactionDto transactionDto = transactionService.updateTransaction(transaction);
         return ResponseEntity.ok(transactionDto);
     }
 
