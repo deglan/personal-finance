@@ -20,6 +20,7 @@ public class BudgetMockFactory {
                 .amount(TestConstants.BUDGET_AMOUNT)
                 .month(TestConstants.BUDGET_MONTH)
                 .year(TestConstants.BUDGET_YEAR)
+                .businessObjectVersion(TestConstants.BUDGET_VERSION)
                 .build();
     }
 
@@ -32,6 +33,7 @@ public class BudgetMockFactory {
                 .amount(TestConstants.BUDGET_AMOUNT)
                 .month(TestConstants.BUDGET_MONTH)
                 .year(TestConstants.BUDGET_YEAR)
+                .businessObjectVersion(TestConstants.BUDGET_VERSION)
                 .build();
     }
 
@@ -45,6 +47,7 @@ public class BudgetMockFactory {
                 .amount(TestConstants.BUDGET_AMOUNT)
                 .month(month)
                 .year(TestConstants.BUDGET_YEAR)
+                .businessObjectVersion(TestConstants.BUDGET_VERSION)
                 .build();
     }
 
@@ -57,6 +60,7 @@ public class BudgetMockFactory {
                 .amount(TestConstants.BUDGET_AMOUNT)
                 .month(TestConstants.BUDGET_MONTH)
                 .year(TestConstants.BUDGET_YEAR)
+                .businessObjectVersion(TestConstants.BUDGET_VERSION)
                 .build();
     }
 
@@ -71,7 +75,8 @@ public class BudgetMockFactory {
                 TestConstants.CATEGORY_UUID,
                 TestConstants.BUDGET_AMOUNT,
                 TestConstants.BUDGET_MONTH,
-                TestConstants.BUDGET_YEAR
+                TestConstants.BUDGET_YEAR,
+                TestConstants.BUDGET_VERSION
         );
     }
 
@@ -82,7 +87,8 @@ public class BudgetMockFactory {
                 TestConstants.CATEGORY_UUID,
                 TestConstants.BUDGET_AMOUNT,
                 month,
-                TestConstants.BUDGET_YEAR
+                TestConstants.BUDGET_YEAR,
+                TestConstants.BUDGET_VERSION
         );
     }
 
@@ -93,7 +99,8 @@ public class BudgetMockFactory {
                 TestConstants.CATEGORY_UUID,
                 TestConstants.BUDGET_AMOUNT,
                 TestConstants.BUDGET_MONTH,
-                TestConstants.BUDGET_YEAR
+                TestConstants.BUDGET_YEAR,
+                TestConstants.BUDGET_VERSION
         );
     }
 

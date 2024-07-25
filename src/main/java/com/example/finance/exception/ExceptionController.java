@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ExceptionController {
 
     @ExceptionHandler(value = {BackendException.class})
-    public ResponseEntity<ProjectError> failureOperationException(BackendException ex) {
+    public ResponseEntity<ProjectError> backendException(BackendException ex) {
         ProjectError failureOperationException = ProjectError.builder()
                 .errorName("failureOperationException")
                 .message(ex.getMessage())

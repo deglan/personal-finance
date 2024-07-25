@@ -5,13 +5,15 @@ import com.example.finance.factory.BudgetMockFactory;
 import com.example.finance.factory.CategoryMockFactory;
 import com.example.finance.factory.UserMockFactory;
 import com.example.finance.mapper.BudgetMapper;
+import com.example.finance.mapper.CategoryMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.BudgetDto;
+import com.example.finance.model.dto.CategoryDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.BudgetRepository;
-import com.example.finance.repository.CategoriesRepository;
-import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import com.example.finance.utils.TestConstants;
 import org.assertj.core.api.Assertions;
@@ -35,9 +37,13 @@ class BudgetServiceTest {
     @Mock
     BudgetRepository budgetRepository;
     @Mock
-    CategoriesRepository categoriesRepository;
+    CategoryService categoryService;
     @Mock
-    UserAccountRepository userAccountRepository;
+    CategoryMapper categoryMapper;
+    @Mock
+    UserAccountService userAccountService;
+    @Mock
+    UserAccountMapper userAccountMapper;
     @Mock
     BudgetMapper budgetMapper;
     @Mock
@@ -46,7 +52,7 @@ class BudgetServiceTest {
 
     @BeforeEach
     public void setUp() {
-        budgetService = new BudgetService(budgetRepository, categoriesRepository, userAccountRepository, budgetMapper, applicationEventPublisher);
+        budgetService = new BudgetService(budgetRepository, categoryService, categoryMapper, userAccountService, userAccountMapper, budgetMapper, applicationEventPublisher);
     }
 
     @Test
@@ -129,12 +135,15 @@ class BudgetServiceTest {
         BudgetDto budgetDto = BudgetMockFactory.createBudgetDto();
         BudgetEntity budgetEntity = BudgetMockFactory.createBudgetEntity();
         UserAccountEntity userAccountEntity = UserMockFactory.createUserEntity();
+        UserAccountDto userDto = UserMockFactory.createUserDto();
         CategoryEntity categoryEntity = CategoryMockFactory.createCategoryEntity();
+        CategoryDto categoryDto = CategoryMockFactory.createCategoryDto();
 
-        when(userAccountRepository.findById(budgetDto.userId()))
-                .thenReturn(Optional.of(userAccountEntity));
-        when(categoriesRepository.findById(budgetDto.categoryId()))
-                .thenReturn(Optional.of(categoryEntity));
+        when(userAccountService.getById(budgetDto.userId()))
+                .thenReturn(userDto);
+        when(categoryService.getById(budgetDto.categoryId()))
+                .thenReturn(categoryDto);
+        when(categoryMapper.toEntity(categoryDto)).thenReturn(categoryEntity);
         when(budgetMapper.toEntity(budgetDto)).thenReturn(budgetEntity);
         when(budgetRepository.save(budgetEntity)).thenReturn(budgetEntity);
         when(budgetMapper.toDto(budgetEntity)).thenReturn(budgetDto);
@@ -144,37 +153,6 @@ class BudgetServiceTest {
 
         // THEN
         Assertions.assertThat(result).isEqualTo(budgetDto);
-    }
-
-    @Test
-    void shouldThrowBackendExceptionWhenUserNotFound() {
-        // GIVEN
-        BudgetDto budgetDto = BudgetMockFactory.createBudgetDto();
-
-        when(userAccountRepository.findById(budgetDto.userId()))
-                .thenReturn(Optional.empty());
-
-        // WHEN & THEN
-        Assertions.assertThatThrownBy(() -> budgetService.create(budgetDto))
-                .isInstanceOf(BackendException.class)
-                .hasMessageContaining(MessageConstants.USER_NOT_FOUND);
-    }
-
-    @Test
-    void shouldThrowBackendExceptionWhenCategoryNotFound() {
-        // GIVEN
-        BudgetDto budgetDto = BudgetMockFactory.createBudgetDto();
-        UserAccountEntity userAccountEntity = UserMockFactory.createUserEntity();
-
-        when(userAccountRepository.findById(budgetDto.userId()))
-                .thenReturn(Optional.of(userAccountEntity));
-        when(categoriesRepository.findById(budgetDto.categoryId()))
-                .thenReturn(Optional.empty());
-
-        // WHEN & THEN
-        Assertions.assertThatThrownBy(() -> budgetService.create(budgetDto))
-                .isInstanceOf(BackendException.class)
-                .hasMessageContaining(MessageConstants.CATEGORY_NOT_FOUND);
     }
 
     @Test

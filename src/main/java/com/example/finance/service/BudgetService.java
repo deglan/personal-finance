@@ -3,18 +3,19 @@ package com.example.finance.service;
 import com.example.finance.event.BudgetUpdateEvent;
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.BudgetMapper;
+import com.example.finance.mapper.CategoryMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.BudgetDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.BudgetEntity;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.BudgetRepository;
-import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,10 @@ import java.util.UUID;
 public class BudgetService {
 
     private final BudgetRepository budgetRepository;
-    private final CategoriesRepository categoriesRepository;
-    private final UserAccountRepository userAccountRepository;
+    private final CategoryService categoryService;
+    private final CategoryMapper categoryMapper;
+    private final UserAccountService userAccountService;
+    private final UserAccountMapper userAccountMapper;
     private final BudgetMapper budgetMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -52,10 +55,9 @@ public class BudgetService {
 
     @Transactional
     public BudgetDto create(BudgetDto budgetDto) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findById(budgetDto.userId())
-                .orElseThrow(() -> new BackendException(MessageConstants.USER_NOT_FOUND));
-        CategoryEntity categoryEntity = categoriesRepository.findById(budgetDto.categoryId())
-                .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
+        UserAccountDto userAccountDto = userAccountService.getById(budgetDto.userId());
+        UserAccountEntity userAccountEntity = userAccountMapper.toEntity(userAccountDto);
+        CategoryEntity categoryEntity = categoryMapper.toEntity(categoryService.getById(budgetDto.categoryId()));
         BudgetEntity budgetEntity = budgetMapper.toEntity(budgetDto);
         budgetEntity.setUserAccountEntity(userAccountEntity);
         budgetEntity.setCategoryEntity(categoryEntity);
@@ -83,5 +85,10 @@ public class BudgetService {
         budgetRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MessageConstants.BUDGET_NOT_FOUND_EXCEPTION_MESSAGE + id));
         budgetRepository.deleteById(id);
+    }
+
+    //Used in aspect programming
+    public boolean existById(UUID id) {
+        return budgetRepository.existsById(id);
     }
 }

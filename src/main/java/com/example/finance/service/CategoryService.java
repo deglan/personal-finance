@@ -107,4 +107,9 @@ public class CategoryService {
                 .orElseThrow(() -> new BackendException(MessageConstants.CATEGORY_NOT_FOUND));
         categoriesRepository.delete(categoryEntity);
     }
+
+    // AOP
+    public boolean existById(UUID id) {
+        return categoriesRepository.existsById(id);
+    }
 }

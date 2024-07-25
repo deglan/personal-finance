@@ -1,5 +1,7 @@
 package com.example.finance.controller;
 
+import com.example.finance.aop.annotation.CheckUuid;
+import com.example.finance.aop.annotation.ItemWithIdMustExist;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.TransferFunds;
@@ -53,6 +55,8 @@ public class CategoryController {
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
+    @CheckUuid(primaryKey = "categoryId")
+    @ItemWithIdMustExist(serviceClass = CategoryService.class, checkExistByIdMethodName = "existById")
     public ResponseEntity<CategoryDto> update(@PathVariable UUID id, @RequestBody CategoryDto category) {
         CategoryDto categoryDto = categoryService.updateCategory( category);
         return ResponseEntity.ok(categoryDto);

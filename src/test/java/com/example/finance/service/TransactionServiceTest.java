@@ -4,14 +4,16 @@ import com.example.finance.exception.model.BackendException;
 import com.example.finance.factory.CategoryMockFactory;
 import com.example.finance.factory.TransactionMockFactory;
 import com.example.finance.factory.UserMockFactory;
+import com.example.finance.mapper.CategoryMapper;
 import com.example.finance.mapper.TransactionMapper;
+import com.example.finance.mapper.UserAccountMapper;
+import com.example.finance.model.dto.CategoryDto;
 import com.example.finance.model.dto.TransactionDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.CategoryEntity;
 import com.example.finance.model.entity.TransactionsEntity;
 import com.example.finance.model.entity.UserAccountEntity;
-import com.example.finance.repository.CategoriesRepository;
 import com.example.finance.repository.TransactionsRepository;
-import com.example.finance.repository.UserAccountRepository;
 import com.example.finance.utils.MessageConstants;
 import com.example.finance.utils.TestConstants;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,13 +40,15 @@ class TransactionServiceTest {
     private TransactionsRepository transactionsRepository;
 
     @Mock
-    private UserAccountRepository userAccountRepository;
+    private UserAccountService userAccountService;
+    private UserAccountMapper userAccountMapper;
 
     @Mock
     private TransactionMapper transactionMapper;
 
     @Mock
-    private CategoriesRepository categoriesRepository;
+    private CategoryService categoryService;
+    private CategoryMapper categoryMapper;
 
     @InjectMocks
     private TransactionService transactionService;
@@ -54,14 +58,18 @@ class TransactionServiceTest {
     private TransactionDto transactionDto;
     private TransactionsEntity transactionsEntity;
     private UserAccountEntity userAccountEntity;
+    private UserAccountDto userAccountDto;
     private CategoryEntity categoryEntity;
+    private CategoryDto categoryDto;
 
     @BeforeEach
     void setUp() {
         transactionDto = TransactionMockFactory.createTransactionDtoFullData();
         transactionsEntity = TransactionMockFactory.createTransactionEntity();
         userAccountEntity = UserMockFactory.createUserEntity();
+        userAccountDto = UserMockFactory.createUserDto();
         categoryEntity = CategoryMockFactory.createCategoryEntity();
+        categoryDto = CategoryMockFactory.createCategoryDto();
     }
 
     @Test
@@ -107,8 +115,10 @@ class TransactionServiceTest {
     @Test
     void shouldCreateTransaction() {
         // Given
-        when(userAccountRepository.findById(transactionDto.userId())).thenReturn(Optional.of(userAccountEntity));
-        when(categoriesRepository.findById(transactionDto.categoryId())).thenReturn(Optional.of(categoryEntity));
+        when(userAccountService.getById(transactionDto.userId())).thenReturn(userAccountDto);
+        when(userAccountMapper.toEntity(userAccountDto)).thenReturn(userAccountEntity);
+        when(categoryService.getById(transactionDto.categoryId())).thenReturn(categoryDto);
+        when(categoryMapper.toEntity(categoryDto)).thenReturn(categoryEntity);
         when(transactionMapper.toEntity(transactionDto)).thenReturn(transactionsEntity);
         when(transactionsRepository.save(transactionsEntity)).thenReturn(transactionsEntity);
         when(transactionMapper.toDto(transactionsEntity)).thenReturn(transactionDto);
@@ -119,29 +129,6 @@ class TransactionServiceTest {
         // Then
         assertThat(result).isEqualTo(transactionDto);
         verify(transactionsRepository).save(transactionsEntity);
-    }
-
-    @Test
-    void shouldThrowBackendExceptionWhenUserNotFoundForCreate() {
-        // Given
-        when(userAccountRepository.findById(transactionDto.userId())).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> transactionService.create(transactionDto))
-                .isInstanceOf(BackendException.class)
-                .hasMessageContaining("User not found");
-    }
-
-    @Test
-    void shouldThrowBackendExceptionWhenCategoryNotFoundForCreate() {
-        // Given
-        when(userAccountRepository.findById(transactionDto.userId())).thenReturn(Optional.of(userAccountEntity));
-        when(categoriesRepository.findById(transactionDto.categoryId())).thenReturn(Optional.empty());
-
-        // When & Then
-        assertThatThrownBy(() -> transactionService.create(transactionDto))
-                .isInstanceOf(BackendException.class)
-                .hasMessageContaining("Category not found");
     }
 
     @Test

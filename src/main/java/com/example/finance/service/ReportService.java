@@ -2,7 +2,9 @@ package com.example.finance.service;
 
 import com.example.finance.exception.model.BackendException;
 import com.example.finance.mapper.ReportMapper;
+import com.example.finance.mapper.UserAccountMapper;
 import com.example.finance.model.dto.ReportDto;
+import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.ReportEntity;
 import com.example.finance.model.entity.UserAccountEntity;
 import com.example.finance.repository.ReportRepository;
@@ -25,7 +27,8 @@ public class ReportService {
     private static final String MESSAGE = "There is no such report";
 
     private final ReportRepository reportRepository;
-    private final UserAccountRepository userAccountRepository;
+    private final UserAccountService userAccountService;
+    private final UserAccountMapper userAccountMapper;
     private final ReportMapper reportMapper;
 
     public List<ReportDto> getByUserId(UUID userId) {
@@ -40,8 +43,8 @@ public class ReportService {
 
     @Transactional
     public ReportDto create(ReportDto report) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findById(report.userId())
-                .orElseThrow(() -> new BackendException("User not found"));
+        UserAccountDto userDto = userAccountService.getById(report.userId());
+        UserAccountEntity userAccountEntity = userAccountMapper.toEntity(userDto);
         ReportEntity reportEntity = reportMapper.toEntity(report);
         reportEntity.setUserAccountEntity(userAccountEntity);
         reportEntity.setGeneratedDate(LocalDate.now());
@@ -65,5 +68,10 @@ public class ReportService {
         ReportEntity reportEntity = reportRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
         reportRepository.delete(reportEntity);
+    }
+
+    // AOP
+    public boolean existById(UUID id) {
+        return reportRepository.existsById(id);
     }
 }

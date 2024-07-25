@@ -1,5 +1,7 @@
 package com.example.finance.controller;
 
+import com.example.finance.aop.annotation.CheckUuid;
+import com.example.finance.aop.annotation.ItemWithIdMustExist;
 import com.example.finance.auth.TokenService;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.UserAccountDto;
@@ -53,6 +55,8 @@ public class UserAccountController {
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
+    @CheckUuid(primaryKey = "userId")
+    @ItemWithIdMustExist(serviceClass = UserAccountService.class, checkExistByIdMethodName = "existById")
     public ResponseEntity<UserAccountDto> update(@PathVariable UUID id, @RequestBody UserAccountEntity userAccount) {
         UserAccountDto userAccountDto = userAccountService.updateUser(id, userAccount);
         return ResponseEntity.ok(userAccountDto);

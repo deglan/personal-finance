@@ -1,10 +1,11 @@
 package com.example.finance.controller;
 
+import com.example.finance.aop.annotation.CheckBusinessObjectVersion;
+import com.example.finance.aop.annotation.CheckUuid;
+import com.example.finance.aop.annotation.ItemWithIdMustExist;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.BudgetDto;
 import com.example.finance.service.BudgetService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,9 @@ public class BudgetController {
     }
 
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
+    @CheckBusinessObjectVersion
+    @CheckUuid(primaryKey = "budgetId")
+    @ItemWithIdMustExist(serviceClass = BudgetService.class, checkExistByIdMethodName = "existById")
     public ResponseEntity<BudgetDto> update(@PathVariable UUID id, @RequestBody BudgetDto budget) {
         BudgetDto budgetDto = budgetService.updateBudget(budget);
         return ResponseEntity.ok(budgetDto);

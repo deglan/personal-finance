@@ -10,6 +10,7 @@ import java.util.UUID;
 @UtilityClass
 public class TestConstants {
 
+    public static final int BUDGET_VERSION = 1;
     public UUID USER_UUID = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     public String USER_LOGIN = "user1";
     public String USER_PASSWORD = "password1";
