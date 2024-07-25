@@ -2,6 +2,7 @@ package com.example.finance.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.test.web.servlet.MvcResult;
