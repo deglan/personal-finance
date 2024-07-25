@@ -48,12 +48,6 @@ public class CategoryController {
                 .body(categoryDto);
     }
 
-    @PostMapping(ApiEndpoints.Endpoints.TRANSFER)
-    public ResponseEntity<String> transferFunds(@RequestBody @Valid TransferFunds request) {
-        categoryService.transferFundsBetweenCategories(request);
-        return ResponseEntity.ok(MessageConstants.FUNDS_TRANSFERRED_SUCCESSFULLY);
-    }
-
     @PutMapping(value = ApiEndpoints.Endpoints.ID)
     @CheckUuid(primaryKey = "categoryId")
     @ItemWithIdMustExist(serviceClass = CategoryService.class, checkExistByIdMethodName = "existById")

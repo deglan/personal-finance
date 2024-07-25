@@ -2,7 +2,7 @@ app:
   db:
     src: jdbc:postgresql://localhost:5432/finance
     username: postgres
-    password: clinic
+    password: root
 spring:
   datasource:
     url: ${app.db.src}

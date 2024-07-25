@@ -27,7 +27,6 @@ public class CategoryService {
 
     private final CategoriesRepository categoriesRepository;
     private final UserAccountService userAccountService;
-    private final BudgetService budgetService;
     private final CategoryMapper categoryMapper;
     private final UserAccountMapper userAccountMapper;
 
@@ -74,31 +73,6 @@ public class CategoryService {
         return categoriesRepository
                 .findByUserAccountEntityUserIdAndName(userId, name)
                 .orElseThrow(() -> new BackendException(MessageConstants.SOURCE_CATEGORY));
-    }
-
-    @Transactional
-    public void transferFundsBetweenCategories(TransferFunds transferFunds) {
-        CategoryEntity fromCategory = getByUserIdAndCategoryName(transferFunds.userId(),
-                transferFunds.fromCategoryName());
-        CategoryEntity toCategory = getByUserIdAndCategoryName(transferFunds.userId(),
-                transferFunds.toCategoryName());
-        BudgetEntity fromBudget = budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
-                fromCategory.getCategoryId(),
-                transferFunds.fromBudgetId());
-        BudgetEntity toBudget = budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
-                toCategory.getCategoryId(),
-                transferFunds.toBudgetId());
-        BigDecimal transferFundsAmount = transferFunds.amount();
-        BigDecimal fromBudgetAmount = fromBudget.getAmount();
-        BigDecimal toBudgetAmount = toBudget.getAmount();
-        if (fromBudgetAmount.compareTo(transferFundsAmount) < 0) {
-            throw new BackendException(MessageConstants.INSUFFICIENT_FUNDS);
-        }
-        BigDecimal newFromBudget = fromBudgetAmount.subtract(transferFundsAmount);
-        BigDecimal newToBudget = toBudgetAmount.add(transferFundsAmount);
-        fromBudget.setAmount(newFromBudget);
-        toBudget.setAmount(newToBudget);
-        budgetService.saveAll(List.of(fromBudget, toBudget));
     }
 
     @Transactional
