@@ -26,6 +26,7 @@ extra["snippetsDir"] = file("build/generated-snippets")
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.security:spring-security-crypto:6.2.2")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-validation:3.2.5")
@@ -39,13 +40,16 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.aspectj:aspectjweaver")
+	implementation("org.postgresql:postgresql")
+	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 
 	compileOnly("org.projectlombok:lombok")
 
-	implementation("org.postgresql:postgresql")
-
 	annotationProcessor("org.projectlombok:lombok")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
 	testCompileOnly("org.projectlombok:lombok")
 
@@ -53,9 +57,12 @@ dependencies {
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.assertj:assertj-core:3.25.0")
 	testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

@@ -17,14 +17,15 @@ import static com.example.finance.business.ApiEndpoints.Endpoints.*;
 @Getter
 public enum ApiEndpoints {
 
-    USER_LOGIN(API + USER + LOGIN, false, null),
+    USER_LOGIN(API + AUTH + LOGIN, false, null),
+    USER_CREATE(API + AUTH + REGISTER, false, null),
+
     USER_GET_ALL(API + USER + GET_ALL, false, null),
     USER_GET_BY_ID(API + USER + GET_BY_ID, false, null),
     USER_GET_CATEGORIES(API + USER + GET_CATEGORIES_BY_USER_ID, false, null),
     USER_GET_TRANSACTIONS(API + USER + GET_TRANSACTIONS_BY_USER_ID, false, null),
     USER_GET_BUDGETS(API + USER + GET_BUDGETS_BY_USER_ID, false, null),
     USER_GET_REPORT(API + USER + GET_REPORTS_BY_USER_ID, false, null),
-    USER_CREATE(API + USER + CREATE, false, null),
     USER_UPDATE(API + USER + ID, false, null),
     USER_DELETE(API + USER + ID, false, null),
 
@@ -64,6 +65,12 @@ public enum ApiEndpoints {
         return VALUES;
     }
 
+    public static List<ApiEndpoints> getUnauthorizedEndpoint() {
+        return getValues().stream()
+                .filter(apiEndpoints -> !apiEndpoints.authorization)
+                .toList();
+    }
+
     public static ApiEndpoints from(String url) throws BackendException {
         return getValues().stream()
                 .filter(apiEndpoints -> matchUrl(apiEndpoints.path, url))
@@ -81,6 +88,7 @@ public enum ApiEndpoints {
     @UtilityClass
     public static final class Endpoints {
         public static final String API = "/api";
+        public static final String AUTH = "/auth";
         public static final String USER = "/user";
         public static final String BUDGET = "/budget";
         public static final String CATEGORIES = "/categories";
@@ -97,5 +105,6 @@ public enum ApiEndpoints {
         public static final String GET_BUDGETS_BY_USER_ID = "/{id}/budgets";
         public static final String GET_REPORTS_BY_USER_ID = "/{id}/reports";
         public static final String TRANSFER = "/transfer";
+        public static final String REGISTER = "/register";
     }
 }

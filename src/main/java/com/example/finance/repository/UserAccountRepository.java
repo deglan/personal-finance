@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface UserAccountRepository extends JpaRepository<UserAccountEntity, UUID> {
 
     Optional<UserAccountEntity> findByLoginAndActiveTrueAndDeletedFalse(String login);
+    Optional<UserAccountEntity> findByEmail(String username);
 }

@@ -52,7 +52,6 @@ public class UserAccountService {
     public UserAccountDto create(UserAccountEntity userAccount) {
         String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
         userAccount.setPassword(encodedPassword);
-        userAccount.setCreatedDate(LocalDateTime.now());
         UserAccountEntity userDb = userAccountRepository.save(userAccount);
         log.info(String.format("Saved user with ID %s and login %s", userDb.getUserId(), userDb.getLogin()));
         return userAccountMapper.toDto(userDb);

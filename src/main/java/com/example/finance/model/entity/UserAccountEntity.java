@@ -6,10 +6,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "USER_ACCOUNT")
@@ -18,7 +23,7 @@ import java.util.UUID;
 @Data
 @Builder
 @ToString(exclude = {"categoryEntities", "budgetEntities", "transactionsEntities", "reportEntities"})
-public class UserAccountEntity {
+public class UserAccountEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,6 +50,7 @@ public class UserAccountEntity {
     @OneToMany(mappedBy = "userAccountEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReportEntity> reportEntities;
     @Column(name = "ROLE")
+    @Enumerated(EnumType.STRING)
     @Convert(converter = RoleConverter.class)
     private List<UserRole> role;
     @Column(name = "DELETED")
@@ -55,4 +61,36 @@ public class UserAccountEntity {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Builder.Default
     private boolean active = true;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.stream()
+                .map(userRole -> new SimpleGrantedAuthority(userRole.name()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return active;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return active;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return active;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
+    }
 }
