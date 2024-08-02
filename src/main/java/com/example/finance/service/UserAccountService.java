@@ -26,16 +26,16 @@ public class UserAccountService {
 
     private final UserAccountRepository userAccountRepository;
     private final UserAccountMapper userAccountMapper;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
     private final UserServiceCacheManager userServiceCacheManager;
 
-    public UserAccountDto getByLoginAndPassword(String login, String password) {
-        UserAccountEntity userAccountEntity = userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(login)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .orElseThrow(() -> new AuthorizationException(MESSAGE));
-        updateLastLogin(userAccountEntity);
-        return userAccountMapper.toDto(userAccountEntity);
-    }
+//    public UserAccountDto getByLoginAndPassword(String login, String password) {
+//        UserAccountEntity userAccountEntity = userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(login)
+//                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+//                .orElseThrow(() -> new AuthorizationException(MESSAGE));
+//        updateLastLogin(userAccountEntity);
+//        return userAccountMapper.toDto(userAccountEntity);
+//    }
 
     public List<UserAccountDto> getAll() {
         return userAccountRepository.findAll().stream()
@@ -50,8 +50,9 @@ public class UserAccountService {
     }
     @Transactional
     public UserAccountDto create(UserAccountEntity userAccount) {
-        String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
-        userAccount.setPassword(encodedPassword);
+//        String encodedPassword = passwordEncoder.encode(userAccount.getPassword());
+//        userAccount.setPassword(encodedPassword);
+        userAccount.setPassword(userAccount.getPassword());
         UserAccountEntity userDb = userAccountRepository.save(userAccount);
         log.info(String.format("Saved user with ID %s and login %s", userDb.getUserId(), userDb.getLogin()));
         return userAccountMapper.toDto(userDb);
@@ -61,8 +62,9 @@ public class UserAccountService {
     public UserAccountDto updateUser(UUID id, UserAccountEntity userAccountEntity) {
         UserAccountEntity userAccountDb = userAccountRepository.findById(id)
                 .orElseThrow(() -> new BackendException(MESSAGE));
-        String encodedPassword = passwordEncoder.encode(userAccountEntity.getPassword());
-        userAccountDb.setPassword(encodedPassword);
+//        String encodedPassword = passwordEncoder.encode(userAccountEntity.getPassword());
+//        userAccountDb.setPassword(encodedPassword);
+        userAccountDb.setPassword(userAccountEntity.getPassword());
         userAccountDb.setLogin(userAccountEntity.getLogin());
         userAccountDb.setEmail(userAccountEntity.getEmail());
         UserAccountEntity savedUserAccountEntity = saveAndClearCacheById(id, userAccountDb);

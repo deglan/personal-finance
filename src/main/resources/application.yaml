@@ -9,6 +9,10 @@ spring:
     username: ${app.db.username}
     password: ${app.db.password}
     driver-class-name: org.postgresql.Driver
+  security:
+    user:
+      name: spring
+      password: guru
   jpa:
     hibernate:
       default_schema: public
@@ -20,12 +24,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   logging:
     level:
+      root: DEBUG
       org:
+        springframework:
+          security: DEBUG
         hibernate:
           SQL: DEBUG
           type:
             descriptor:
               sql: TRACE
+      com.example.finance: DEBUG
+      com.example.finance.controller: TRACE
   flyway:
     url: ${app.db.src}
     user: ${app.db.username}

@@ -41,18 +41,18 @@ class UserAccountServiceTest {
     @InjectMocks
     private UserAccountService userAccountService;
 
-    @Test
-    void getByLoginAndPassword_loginProcedure_Success() {
-        //GIVEN
-        UserAccountEntity entity = UserMockFactory.createUserEntity();
-        when(userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(TestConstants.USER_LOGIN))
-                .thenReturn(Optional.of(entity));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
-
-        //WHEN THEN
-        assertDoesNotThrow(() -> userAccountService.getByLoginAndPassword(TestConstants.USER_LOGIN, TestConstants.USER_PASSWORD));
-    }
+//    @Test
+//    void getByLoginAndPassword_loginProcedure_Success() {
+//        //GIVEN
+//        UserAccountEntity entity = UserMockFactory.createUserEntity();
+//        when(userAccountRepository.findByLoginAndActiveTrueAndDeletedFalse(TestConstants.USER_LOGIN))
+//                .thenReturn(Optional.of(entity));
+//        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+//        when(userAccountMapper.toDto(any())).thenReturn(UserMockFactory.createUserDto());
+//
+//        //WHEN THEN
+//        assertDoesNotThrow(() -> userAccountService.getByLoginAndPassword(TestConstants.USER_LOGIN, TestConstants.USER_PASSWORD));
+//    }
 
     @Test
     void create_createUser_Success() {

@@ -1,3 +1,15 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_test
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   flyway:
     enabled: false
+  logging:
+    level:
+      root: DEBUG

@@ -2,15 +2,11 @@ package com.example.finance.controller;
 
 import com.example.finance.aop.annotation.CheckUuid;
 import com.example.finance.aop.annotation.ItemWithIdMustExist;
-import com.example.finance.auth.JwtService;
 import com.example.finance.business.ApiEndpoints;
 import com.example.finance.model.dto.UserAccountDto;
 import com.example.finance.model.entity.UserAccountEntity;
-import com.example.finance.service.*;
+import com.example.finance.service.UserAccountService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -46,8 +46,6 @@ class CategoryServiceTest {
     @Mock
     UserAccountService userAccountService;
     @Mock
-    BudgetService budgetService;
-    @Mock
     CategoryMapper categoryMapper;
     @Mock
     UserAccountMapper userAccountMapper;
@@ -60,7 +58,7 @@ class CategoryServiceTest {
 
     @BeforeEach
     public void setUp() {
-        categoryService = new CategoryService(categoriesRepository, userAccountService, budgetService, categoryMapper, userAccountMapper);
+        categoryService = new CategoryService(categoriesRepository, userAccountService, categoryMapper, userAccountMapper);
         categoryDto = CategoryMockFactory.createCategoryDto();
         categoryEntity = CategoryMockFactory.createCategoryEntity();
         userAccountDto = UserMockFactory.createUserDto();
@@ -101,20 +99,20 @@ class CategoryServiceTest {
                 .hasMessageContaining(MessageConstants.CATEGORY_NOT_FOUND);
     }
 
-    @Test
-    void transferFunds_changeFundsBetweenCategories_success() {
-        // GIVEN
-        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(500.00);
-        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
-        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
-
-        // WHEN
-        categoryService.transferFundsBetweenCategories(helper.getTransferFunds());
-
-        // THEN
-        assertEquals(BigDecimal.valueOf(400.00), helper.getFromBudget().getAmount());
-        assertEquals(BigDecimal.valueOf(400.00), helper.getToBudget().getAmount());
-    }
+//    @Test
+//    void transferFunds_changeFundsBetweenCategories_success() {
+//        // GIVEN
+//        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(500.00);
+//        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
+//        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
+//
+//        // WHEN
+//        categoryService.transferFundsBetweenCategories(helper.getTransferFunds());
+//
+//        // THEN
+//        assertEquals(BigDecimal.valueOf(400.00), helper.getFromBudget().getAmount());
+//        assertEquals(BigDecimal.valueOf(400.00), helper.getToBudget().getAmount());
+//    }
 
     @Test
     void shouldCreateCategory() {
@@ -196,44 +194,44 @@ class CategoryServiceTest {
                 .hasMessageContaining(MessageConstants.SOURCE_CATEGORY);
     }
 
-    @Test
-    void transferFunds_changeFundsBetweenCategories_insufficientFunds() {
-        //GIVEN
-        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(50.00);
-        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
-        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
-
-        //WHEN, THEN
-        BackendException exception = assertThrows(BackendException.class, () ->
-                categoryService
-                        .transferFundsBetweenCategories(helper.getTransferFunds()));
-        assertEquals(MessageConstants.INSUFFICIENT_FUNDS, exception.getMessage());
-    }
-
-    private TransferFundsSetupHelper setupTransferFunds(BigDecimal fromBudgetAmount, BigDecimal toBudgetAmount) {
-        UserAccountEntity user = UserMockFactory.createUserEntity();
-        CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
-        CategoryEntity toCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
-        BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
-        BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
-        TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
-
-        fromBudget.setAmount(fromBudgetAmount);
-        toBudget.setAmount(toBudgetAmount);
-
-        when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.fromCategoryName()))
-                .thenReturn(Optional.of(fromCategory));
-        when(categoriesRepository
-                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.toCategoryName()))
-                .thenReturn(Optional.of(toCategory));
-        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
-                fromCategory.getCategoryId(), transferFunds.fromBudgetId()))
-                .thenReturn(fromBudget);
-        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
-                toCategory.getCategoryId(), transferFunds.toBudgetId()))
-                .thenReturn(toBudget);
-
-        return new TransferFundsSetupHelper(user, fromCategory, toCategory, fromBudget, toBudget, transferFunds);
-    }
+//    @Test
+//    void transferFunds_changeFundsBetweenCategories_insufficientFunds() {
+//        //GIVEN
+//        BigDecimal initialFromBudgetAmount = BigDecimal.valueOf(50.00);
+//        BigDecimal initialToBudgetAmount = BigDecimal.valueOf(300.00);
+//        TransferFundsSetupHelper helper = setupTransferFunds(initialFromBudgetAmount, initialToBudgetAmount);
+//
+//        //WHEN, THEN
+//        BackendException exception = assertThrows(BackendException.class, () ->
+//                categoryService
+//                        .transferFundsBetweenCategories(helper.getTransferFunds()));
+//        assertEquals(MessageConstants.INSUFFICIENT_FUNDS, exception.getMessage());
+//    }
+//
+//    private TransferFundsSetupHelper setupTransferFunds(BigDecimal fromBudgetAmount, BigDecimal toBudgetAmount) {
+//        UserAccountEntity user = UserMockFactory.createUserEntity();
+//        CategoryEntity fromCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
+//        CategoryEntity toCategory = CategoryMockFactory.createCategoryEntityWithUser(user);
+//        BudgetEntity fromBudget = BudgetMockFactory.createBudgetEntity(user, fromCategory);
+//        BudgetEntity toBudget = BudgetMockFactory.createBudgetEntity(user, toCategory);
+//        TransferFunds transferFunds = TransferFundsMockFactory.createTransferFundsDto();
+//
+//        fromBudget.setAmount(fromBudgetAmount);
+//        toBudget.setAmount(toBudgetAmount);
+//
+//        when(categoriesRepository
+//                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.fromCategoryName()))
+//                .thenReturn(Optional.of(fromCategory));
+//        when(categoriesRepository
+//                .findByUserAccountEntityUserIdAndName(transferFunds.userId(), transferFunds.toCategoryName()))
+//                .thenReturn(Optional.of(toCategory));
+//        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+//                fromCategory.getCategoryId(), transferFunds.fromBudgetId()))
+//                .thenReturn(fromBudget);
+//        when(budgetService.getByUserIdAndCategoryIdAndBudgetId(transferFunds.userId(),
+//                toCategory.getCategoryId(), transferFunds.toBudgetId()))
+//                .thenReturn(toBudget);
+//
+//        return new TransferFundsSetupHelper(user, fromCategory, toCategory, fromBudget, toBudget, transferFunds);
+//    }
 }
