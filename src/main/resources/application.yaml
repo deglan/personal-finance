@@ -32,9 +32,7 @@ spring:
           SQL: DEBUG
           type:
             descriptor:
-              sql: TRACE
-      com.example.finance: DEBUG
-      com.example.finance.controller: TRACE
+              sql: DEBUG
   flyway:
     url: ${app.db.src}
     user: ${app.db.username}

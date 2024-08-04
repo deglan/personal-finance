@@ -62,6 +62,7 @@ public class UserAccountEntity implements UserDetails {
     @Builder.Default
     private boolean active = true;
 
+    //TODO 008 Spring Security Configuration
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.stream()
